@@ -25,3 +25,6 @@
 1. babel,webpack等のエコシステムの設備
 1. 型付けの導入(PHP:タイプヒンティング、JS:TypeScript)
 1. PHPUnitの導入
+
+## スペシャルサンクス
+ぱすた([@pasta04](https://twitter.com/pasta04 "twitter"))さん:JavaScriptの機能追加、リファクタ

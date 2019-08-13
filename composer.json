@@ -15,7 +15,6 @@
         "vlucas/phpdotenv": "^3.4",
         "twig/twig": "^2.11",
         "twig/extensions": "^1.5",
-        "zendframework/zend-diactoros": "^2.1",
         "phpFastCache/phpFastCache": "^7.0"
     },
     "autoload": {
