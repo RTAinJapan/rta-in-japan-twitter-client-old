@@ -1,0 +1,5 @@
+/cache
+/phpunit.xml
+/vendor/*
+/.env
+.htaccess
