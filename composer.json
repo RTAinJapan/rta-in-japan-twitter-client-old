@@ -2,7 +2,7 @@
     "name": "yagamuu/twitter-client-for-rtainjapan",
     "description": "Twitter client for RTA in Japan Staff",
     "type" : "project",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "yagamuu",
