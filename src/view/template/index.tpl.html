@@ -11,8 +11,8 @@
     {% endfor %}
 {% endif %}
 
-{% if infomations|length > 0 %}
-    {% for info in infomations %}
+{% if informations|length > 0 %}
+    {% for info in informations %}
         <div class="notification is-info">
             <button class="delete"></button>
             {{ info.text }}: <a href="{{ info.url }}" target="_blank">{{ info.url }}</a>
