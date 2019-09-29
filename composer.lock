@@ -1,11 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "1ee81e2cfc3cd8eb34cd412a02afe09f",
-    "content-hash": "680614b747d346a9693d99ee3416815a",
+    "content-hash": "fb74c1fd79597bca125924e07e48b718",
     "packages": [
         {
             "name": "mpyw/co",
@@ -59,20 +58,20 @@
                 "http",
                 "parallel"
             ],
-            "time": "2016-08-28 14:02:56"
+            "time": "2016-08-28T14:02:56+00:00"
         },
         {
             "name": "mpyw/cowitter",
-            "version": "v1.0.0",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpyw/cowitter.git",
-                "reference": "1668ef4c0411ab11a3fbc954f288c5c5e928aee2"
+                "reference": "f77bfa1cafe12927a987aa826b2fbf6433845c35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpyw/cowitter/zipball/1668ef4c0411ab11a3fbc954f288c5c5e928aee2",
-                "reference": "1668ef4c0411ab11a3fbc954f288c5c5e928aee2",
+                "url": "https://api.github.com/repos/mpyw/cowitter/zipball/f77bfa1cafe12927a987aa826b2fbf6433845c35",
+                "reference": "f77bfa1cafe12927a987aa826b2fbf6433845c35",
                 "shasum": ""
             },
             "require": {
@@ -81,12 +80,12 @@
                 "ext-openssl": "*",
                 "lib-curl": ">=7.20.0",
                 "mpyw/co": "^1.5",
-                "php": ">=5.5.0"
+                "php": ">=5.6.0"
             },
             "require-dev": {
-                "codeception/aspect-mock": "^2.0",
+                "codeception/aspect-mock": "^2.2",
                 "codeception/codeception": "^2.2",
-                "codeception/specify": "*",
+                "codeception/specify": "^0.4.6",
                 "mpyw/privator": "^2.0",
                 "php": ">=7.0.0",
                 "satooshi/php-coveralls": "^1.0"
@@ -120,7 +119,7 @@
                 "upload",
                 "video"
             ],
-            "time": "2016-08-27 13:11:56"
+            "time": "2019-05-16T13:42:58+00:00"
         },
         {
             "name": "phpfastcache/phpfastcache",
@@ -220,7 +219,7 @@
                 "zend memory cache",
                 "zend server"
             ],
-            "time": "2019-03-03 14:39:16"
+            "time": "2019-03-03T14:39:16+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -270,7 +269,7 @@
                 "php",
                 "type"
             ],
-            "time": "2015-07-25 16:39:46"
+            "time": "2015-07-25T16:39:46+00:00"
         },
         {
             "name": "psr/cache",
@@ -316,7 +315,7 @@
                 "psr",
                 "psr-6"
             ],
-            "time": "2016-08-06 20:24:11"
+            "time": "2016-08-06T20:24:11+00:00"
         },
         {
             "name": "psr/simple-cache",
@@ -364,7 +363,7 @@
                 "psr-16",
                 "simple-cache"
             ],
-            "time": "2017-10-23 01:57:42"
+            "time": "2017-10-23T01:57:42+00:00"
         },
         {
             "name": "react/promise",
@@ -410,7 +409,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2019-01-07 21:25:54"
+            "time": "2019-01-07T21:25:54+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -468,7 +467,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2019-08-06 08:03:45"
+            "time": "2019-08-06T08:03:45+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -527,7 +526,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2019-08-06 08:03:45"
+            "time": "2019-08-06T08:03:45+00:00"
         },
         {
             "name": "twig/extensions",
@@ -582,7 +581,7 @@
                 "i18n",
                 "text"
             ],
-            "time": "2018-12-05 18:34:18"
+            "time": "2018-12-05T18:34:18+00:00"
         },
         {
             "name": "twig/twig",
@@ -649,7 +648,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-06-18 15:37:11"
+            "time": "2019-06-18T15:37:11+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -706,7 +705,7 @@
                 "env",
                 "environment"
             ],
-            "time": "2019-08-27 17:00:38"
+            "time": "2019-08-27T17:00:38+00:00"
         }
     ],
     "packages-dev": [],

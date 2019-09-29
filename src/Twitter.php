@@ -65,12 +65,12 @@ class Twitter
     public function deleteTweet($id)
     {
         $errors = [];
-        $infomations = [];
+        $informations = [];
 
         if (!self::checkToken()) {
             return [
                 'errors' => $errors,
-                'infomations' => $infomations
+                'informations' => $informations
             ];
         }
 
@@ -78,7 +78,7 @@ class Twitter
             $status = $this->client->post('statuses/destroy', [
                 'id' => $id
             ]);
-            $infomations[] = [
+            $informations[] = [
                 'text' => '削除しました',
                 'url' => self::getTweetUrl($status),
             ];
@@ -93,7 +93,7 @@ class Twitter
 
         return [
             'errors' => $errors,
-            'infomations' => $infomations
+            'informations' => $informations
         ];
     }
 
@@ -101,7 +101,7 @@ class Twitter
     {
         $result = [
             'errors' => [],
-            'infomations'  => [],
+            'informations'  => [],
         ];
         $uploads = [];
 
@@ -165,13 +165,13 @@ class Twitter
     private function tweetText()
     {
         $errors = [];
-        $infomations = [];
+        $informations = [];
         try {
             $status = $this->client->post('statuses/update', [
                 'status' => $_POST["body"],
             ]);
         
-            $infomations[] = [
+            $informations[] = [
                 'text' => '投稿しました',
                 'url' => self::getTweetUrl($status),
             ];
@@ -181,17 +181,17 @@ class Twitter
 
         return [
             'errors' => $errors,
-            'infomations'  => $infomations
+            'informations'  => $informations
         ];
     }
 
     private function tweetMedia($files, $isVideo = false)
     {
         $errors = [];
-        $infomations  = [];
+        $informations  = [];
 
         try {
-            $infomations = Co::wait(function () use ($infomations, $files, $isVideo) {
+            $informations = Co::wait(function () use ($informations, $files, $isVideo) {
                 $status = [];
                 $media_ids = [];
                 // 通常の画像
@@ -218,12 +218,12 @@ class Twitter
                     'status' => $_POST["body"] ?? '',
                     'media_ids' => $media_ids,
                 ]);
-                $infomations[] = [
+                $informations[] = [
                     'text' => '投稿しました',
                     'url' => self::getTweetUrl($status),
                 ];
 
-                return $infomations;
+                return $informations;
             });
         } catch (\RuntimeException $e) {
             $errors[] = $e->getMessage();
@@ -231,7 +231,7 @@ class Twitter
 
         return [
             'errors'      => $errors,
-            'infomations' => $infomations
+            'informations' => $informations
         ];
     }
 
