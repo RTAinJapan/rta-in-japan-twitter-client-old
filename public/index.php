@@ -5,7 +5,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use yagamuu\TwitterClientForRtainjapan\Twitter;
 use Phpfastcache\CacheManager;
 use Phpfastcache\Config\Config;
-use Phpfastcache\Core\phpFastCache;
 
 session_start();
 date_default_timezone_set('Asia/Tokyo');
@@ -30,7 +29,7 @@ $twitter = new Twitter($cache);
 
 $view = [
     'errors' => [],
-    'infomations' => [],
+    'informations' => [],
     'user_timelines' => [],
     'mentions_timelines' => [],
 ];
@@ -64,8 +63,8 @@ $token = md5(uniqid(rand(), true));
 $_SESSION['token'] = $token;
 $view['token'] = $token;
 
-$loader  = new \Twig_Loader_Filesystem($basedir . '/src/view/template');
-$twig    = new \Twig_Environment($loader, [
+$loader  = new \Twig\Loader\FilesystemLoader($basedir . '/src/view/template');
+$twig    = new \Twig\Environment($loader, [
     'cache' => $basedir . '/cache/twig',
     'debug' => true,
 ]);
