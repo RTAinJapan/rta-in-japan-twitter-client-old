@@ -3,25 +3,15 @@
 namespace yagamuu\TwitterClientForRtainjapan;
 
 use mpyw\Co\Co;
-use mpyw\Cowitter\Client;
-use Phpfastcache\CacheManager;
-use Phpfastcache\Config\Config;
-use Phpfastcache\Core\phpFastCache;
 
 class Twitter
 {
     private $client;
     private $cache;
 
-    public function __construct($cache)
+    public function __construct($client, $cache)
     {
-        $this->client = new Client([
-            getenv('CONSUMER_KEY'),
-            getenv('CONSUMER_SECRET'),
-            getenv('ACCESS_TOKEN'),
-            getenv('ACCESS_TOKEN_SECRET'),
-        ]);
-
+        $this->client = $client;
         $this->cache = $cache;
     }
 

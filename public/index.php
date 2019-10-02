@@ -2,10 +2,10 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use mpyw\Cowitter\Client;
 use yagamuu\TwitterClientForRtainjapan\Twitter;
 use Phpfastcache\CacheManager;
 use Phpfastcache\Config\Config;
-use Phpfastcache\Core\phpFastCache;
 
 session_start();
 date_default_timezone_set('Asia/Tokyo');
@@ -21,12 +21,20 @@ $dotenv->required([
     'SCREEN_NAME',
 ])->notEmpty();
 
+$client = new Client([
+    getenv('CONSUMER_KEY'),
+    getenv('CONSUMER_SECRET'),
+    getenv('ACCESS_TOKEN'),
+    getenv('ACCESS_TOKEN_SECRET'),
+]);
+
 CacheManager::setDefaultConfig(new Config([
     "path" => sys_get_temp_dir(),
     "itemDetailedDate" => false
   ]));
 $cache = CacheManager::getInstance('files');
-$twitter = new Twitter($cache);
+
+$twitter = new Twitter($client, $cache);
 
 $view = [
     'errors' => [],
