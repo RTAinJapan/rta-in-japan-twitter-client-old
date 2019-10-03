@@ -22,37 +22,38 @@ class TwitterTest extends TestCase
           ]));
 
         $this->client_builder = $this->getMockBuilder(Client::class)->setConstructorArgs([[
-            getenv('CONSUMER_KEY'),
-            getenv('CONSUMER_SECRET'),
-            getenv('ACCESS_TOKEN'),
-            getenv('ACCESS_TOKEN_SECRET'),
+            'consumer key',
+            'consumer secret',
+            'access token',
+            'access token secret',
         ]]);
     }
 
-    public function testGetUserTimelineWithoutError():void
+    public function testGetUserTimeline():void
     {
-        $user_timelines = ['tweet' => 'this is tweet'];
+        $excepted_timelines = ['tweet' => 'this is tweet'];
         $mock_client = $this->client_builder->setMethods(['get'])->getMock();
         $mock_client->expects($this->once())
                 ->method('get')
                 ->with(
                     $this->equalTo('statuses/user_timeline'),
-                    $this->equalTo([
+                    $this->equalTo(
+                        [
                         'screen_name' => getenv('SCREEN_NAME'),
                         'count'       => 10
                         ]
                     )
-                )->willReturn($user_timelines);
+                )->willReturn($excepted_timelines);
 
         $cache = CacheManager::getInstance('files');
         $twitter = new Twitter($mock_client, $cache);
 
-        $response_timelines = $twitter->getUserTimeline();
+        $actual_timelines = $twitter->getUserTimeline();
 
         $this->assertEquals([
             'errors' => [],
-            'user_timelines' => $user_timelines
-        ], $response_timelines);
+            'user_timelines' => $excepted_timelines
+        ], $actual_timelines);
     }
 
     public function testGetMentionsTimeline():void
