@@ -56,6 +56,11 @@ class TwitterTest extends TestCase
         ], $actual_timelines);
     }
 
+    public function testCatchRuntimeExceptionOnGetUserTimeline():void
+    {
+        $this->markTestIncomplete('WIP.');
+    }
+
     public function testGetMentionsTimeline():void
     {
         $this->markTestIncomplete('WIP.');
