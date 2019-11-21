@@ -50,12 +50,14 @@ const TweetList: React.SFC<PropsType> = props => {
   return (
     <Paper className={classes.root}>
       {props.tweets.length === 0 && <div className={classes.tweetContent}>{label.noTweet}</div>}
-      {props.tweets.map(item => (
-        <div className={classes.tweet} key={item.idStr}>
+      {props.tweets.map((item, index) => (
+        <div className={classes.tweet} key={`${item.idStr}_${index}`}>
           <Tooltip title={label.delete}>
-            <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.idStr)} disabled={!props.deleteTweet}>
-              <ClearIcon />
-            </Fab>
+            <span>
+              <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.idStr)} disabled={!props.deleteTweet}>
+                <ClearIcon />
+              </Fab>
+            </span>
           </Tooltip>
           <div className={classes.tweetContent}>
             <Tweet {...item} />

@@ -7,6 +7,10 @@ import Paper from '@material-ui/core/Paper';
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
+    position: 'sticky',
+    top: 0,
+    backgroundColor: 'white',
+    zIndex: 100000,
   },
   hidden: {
     display: 'hidden',
