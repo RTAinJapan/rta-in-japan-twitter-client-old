@@ -40,10 +40,12 @@ export const OtherInfo: React.SFC<PropsType> = props => {
         </ListItem>
         <Divider />
         <Divider />
-        <ListItem button onClick={props.logout}>
-          <Button color={'secondary'} variant={'contained'} className={classes.logout}>
-            ログアウト
-          </Button>
+        <ListItem>
+          <div className={classes.logout}>
+            <Button color={'secondary'} variant={'contained'} onClick={props.logout}>
+              ログアウト
+            </Button>
+          </div>
         </ListItem>
       </List>
     </div>
