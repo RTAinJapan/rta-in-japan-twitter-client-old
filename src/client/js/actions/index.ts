@@ -62,3 +62,16 @@ export const uploadMedia = createAction(UPLOAD_MEDIA, action => {
 export const storeMedia = createAction(STORE_MEDIA, action => {
   return (file: PreviewFile[]) => action(file);
 });
+
+// Discord
+const LOGOUT_DISCORD = 'LOGOUT_DISCORD';
+/** ログアウトする */
+export const logoutDiscord = createAction(LOGOUT_DISCORD, action => {
+  return () => action();
+});
+
+const STORE_DISCORD_USER_NAME = 'STORE_DISCORD_USER_NAME';
+/** Discordのユーザ名を格納 */
+export const storeDiscordUserName = createAction(STORE_DISCORD_USER_NAME, action => {
+  return (username: string | null) => action(username);
+});

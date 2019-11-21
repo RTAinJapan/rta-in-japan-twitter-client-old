@@ -72,7 +72,7 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
       );
     } else {
       return (
-        <Button className={classes.button} variant={'contained'} color={'primary'} onClick={props.clickYes}>
+        <Button className={classes.button} variant={'contained'} color={'primary'} onClick={props.clickClose}>
           {label.ok}
         </Button>
       );
@@ -111,6 +111,7 @@ const mapStateToProps = (state: RootState): ComponentProps => {
 
 // action
 const mapDispatchToProps = {
+  clickClose: actions.closeDialog,
   clickYes: actions.dialogYes,
   clickNo: actions.dialogNo,
 };

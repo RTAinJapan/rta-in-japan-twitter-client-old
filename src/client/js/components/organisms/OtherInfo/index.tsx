@@ -3,16 +3,25 @@ import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { ListItemIcon, Divider } from '@material-ui/core';
+import { ListItemIcon, Divider, Button } from '@material-ui/core';
 import LazyImage from '../../atom/LazyImage';
+import { RootState } from '../../../reducers';
+import * as actions from '../../../actions';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles({
   root: {},
+  logout: {
+    marginTop: 100,
+  },
 });
 
 type ComponentProps = {};
+type ActionProps = typeof mapDispatchToProps;
 
-const OtherInfo: React.SFC<ComponentProps & React.Props<{}>> = props => {
+type PropsType = ComponentProps & ActionProps;
+
+export const OtherInfo: React.SFC<PropsType> = props => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -30,9 +39,28 @@ const OtherInfo: React.SFC<ComponentProps & React.Props<{}>> = props => {
           <ListItemText>RTA in Japan Discord</ListItemText>
         </ListItem>
         <Divider />
+        <Divider />
+        <ListItem button onClick={props.logout}>
+          <Button color={'secondary'} variant={'contained'} className={classes.logout}>
+            ログアウト
+          </Button>
+        </ListItem>
       </List>
     </div>
   );
 };
 
-export default OtherInfo;
+// state
+const mapStateToProps = (state: RootState): ComponentProps => {
+  return {};
+};
+
+// action
+const mapDispatchToProps = {
+  logout: actions.logoutDiscord,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(OtherInfo);

@@ -17,9 +17,14 @@ import Footer from '../../organisms/Footer';
 import TweetList from '../../organisms/TweetList';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import { oauthDiscord } from '../../../service/discord';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    login: {
+      padding: 10,
+    },
     button: {
       margin: theme.spacing(1),
       float: 'right',
@@ -33,6 +38,7 @@ type ComponentProps = {
   notify: GlobalState['notify'];
   list: GlobalState['list'];
   dialog: GlobalState['dialog'];
+  discord: GlobalState['discord'];
 };
 type ActionProps = typeof mapDispatchToProps;
 
@@ -57,50 +63,67 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
 
   return (
     <div>
-      <NavTabs tabs={tabs}>
-        <div style={{ padding: 10 }}>
-          <TweetForm />
-        </div>
-        <div style={{ padding: 10, display: 'flex' }}>
-          <Grid container spacing={3}>
-            <Grid item sm={4}>
-              <div style={{ height: '100%' }}>
-                <Typography variant={'h6'}>運営ツイート</Typography>
-                <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-                  <TweetList tweets={props.list.self} deleteTweet={props.deleteTweet} />
-                </div>
+      {props.discord.username ? (
+        <>
+          <div>
+            <NavTabs tabs={tabs}>
+              {/* 投稿 */}
+              <div style={{ padding: 10 }}>
+                <TweetForm />
               </div>
-            </Grid>
-            <Grid item sm={4}>
-              <div style={{ height: '100%' }}>
-                <Typography variant={'h6'}>検索</Typography>
-                <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-                  <TweetList tweets={props.list.search} />
-                </div>
+              {/* ツイート */}
+              <div style={{ padding: 10, display: 'flex' }}>
+                <Grid container spacing={3}>
+                  <Grid item sm={3}>
+                    <div style={{ height: '100%' }}>
+                      <Typography variant={'h6'}>運営ツイート</Typography>
+                      <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                        <TweetList tweets={props.list.self} deleteTweet={props.deleteTweet} />
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid item sm={3}>
+                    <div style={{ height: '100%' }}>
+                      <Typography variant={'h6'}>検索</Typography>
+                      <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                        <TweetList tweets={props.list.search} />
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid item sm={3}>
+                    <div style={{ height: '100%' }}>
+                      <Typography variant={'h6'}>ハッシュタグ</Typography>
+                      <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                        <TweetList tweets={props.list.hash} />
+                      </div>
+                    </div>
+                  </Grid>
+                </Grid>
               </div>
-            </Grid>
-            <Grid item sm={4}>
-              <div style={{ height: '100%' }}>
-                <Typography variant={'h6'}>ハッシュタグ</Typography>
-                <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-                  <TweetList tweets={props.list.hash} />
-                </div>
+              {/* リンク */}
+              <div style={{ padding: 10 }}>
+                <OtherInfo />
               </div>
-            </Grid>
-          </Grid>
-        </div>
-        <div style={{ padding: 10 }}>
-          <OtherInfo />
-        </div>
-      </NavTabs>
-      <Footer />
+            </NavTabs>
+          </div>
+          <Footer />
 
-      {/* 通知系 */}
-      <Dialog />
-      <Modal open={props.dialog.show} modalClose={props.closeModal}>
-        {props.dialog.message}
-      </Modal>
-      <Snackbar open={props.notify.show} message={props.notify.message} variant={props.notify.type} onClose={props.closeNotify} />
+          {/* 通知系 */}
+          <Dialog />
+          <Modal open={props.dialog.show} modalClose={props.closeModal}>
+            {props.dialog.message}
+          </Modal>
+          <Snackbar open={props.notify.show} message={props.notify.message} variant={props.notify.type} onClose={props.closeNotify} />
+        </>
+      ) : (
+        <div className={classes.login}>
+          <Modal open={true}>
+            <Button color={'primary'} variant={'contained'} onClick={oauthDiscord}>
+              Discordでログイン
+            </Button>
+          </Modal>
+        </div>
+      )}
     </div>
   );
 };
@@ -111,6 +134,7 @@ const mapStateToProps = (state: RootState): ComponentProps => {
     notify: state.reducer.notify,
     list: state.reducer.list,
     dialog: state.reducer.dialog,
+    discord: state.reducer.discord,
   };
 };
 

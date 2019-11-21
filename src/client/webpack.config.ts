@@ -13,7 +13,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const commonConfig: Partial<Configuration> = {
   mode: isProduction ? 'production' : 'development',
-  devtool: isProduction ? 'source-map' : 'cheap-source-map',
+  devtool: isProduction ? 'inline-source-map' : 'cheap-source-map',
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
   },

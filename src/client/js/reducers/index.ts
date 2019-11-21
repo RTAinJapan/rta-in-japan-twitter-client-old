@@ -24,6 +24,11 @@ export type GlobalState = {
     type: 'info' | 'warning' | 'error';
     message: string;
   };
+  /** Discord */
+  discord: {
+    username: string | null;
+    token: string | null;
+  };
   /** ダイアログ */
   dialog: DialogState;
   /** ツイート一覧 */
@@ -67,6 +72,10 @@ const initial: GlobalState = {
     message: '',
     detail: '',
   },
+  discord: {
+    username: null,
+    token: null,
+  },
   list: {
     self: [tweet, tweet, tweet, tweet, tweet, tweet, tweet, tweet],
     hash: [tweet],
@@ -91,7 +100,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
       return { ...state, dialog: { ...state.dialog, ...action.payload } };
     }
     case getType(actions.closeDialog): {
-      return { ...state, notify: { ...initial.notify } };
+      return { ...state, dialog: { ...initial.dialog } };
     }
     // ツイートを取得
     case getType(actions.updateTweetList): {
@@ -108,6 +117,16 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         ...state,
         post: {
           media: action.payload,
+        },
+      };
+    }
+    // Discordユーザ名
+    case getType(actions.storeDiscordUserName): {
+      return {
+        ...state,
+        discord: {
+          ...state.discord,
+          username: action.payload,
         },
       };
     }

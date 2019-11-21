@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  </head>
+  <body>
+    ログイン中...
+    <script>
+      var codeMatch = window.location.search.match(/\?code=(.*)/);
+      if (codeMatch.length === 2) {
+        localStorage.setItem('code', codeMatch[1]);
+      }
+      window.location.replace('../../');
+    </script>
+  </body>
+</html>

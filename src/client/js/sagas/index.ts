@@ -1,15 +1,17 @@
 import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
-import { getType } from 'typesafe-actions';
 import * as actions from '../actions';
 import { confirmSaga } from './dialog';
-import { GlobalState, RootState } from '../reducers';
+import { RootState } from '../reducers';
 import { PreviewFile } from '../types/global';
+import { loginCheck, logoutDiscord } from '../service/discord';
 
 export default function* rootSaga() {
   yield call(fetchListAndApplyState);
   yield takeEvery(actions.submitTweet, submitTweet);
   yield takeEvery(actions.deleteTweet, deleteTweet);
   yield takeEvery(actions.uploadMedia, uploadMedia);
+  yield takeEvery(actions.logoutDiscord, logoutDiscord);
+  yield call(loginCheck);
 }
 
 function* fetchListAndApplyState() {

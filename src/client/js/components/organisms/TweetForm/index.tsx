@@ -54,6 +54,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   const handleTemplateApply = (value: string) => (event: React.MouseEvent<HTMLButtonElement>) => {
     setShowTemplate(false);
     setTweet(value);
+    setTweetCount(countStr(value));
   };
 
   const handleDrop = (accepted: File[], rejected: File[]) => {
@@ -143,7 +144,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
               }}
               defaultValue={'第壱話\n使\n徒、襲来'}
             />
-            <Button variant={'contained'} color={'primary'}>
+            <Button variant={'contained'} color={'primary'} onClick={handleTemplateApply('第壱話\n使\n徒、襲来')}>
               反映
             </Button>
           </div>
