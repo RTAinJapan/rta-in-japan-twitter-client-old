@@ -22,6 +22,15 @@ import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    root: {
+      justifyContent: 'center',
+      display: 'flex',
+    },
+    content: {
+      maxWidth: 1000,
+      width: '100%',
+      display: 'initial',
+    },
     login: {
       padding: 10,
     },
@@ -62,68 +71,69 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
   ];
 
   return (
-    <div>
-      {props.discord.username ? (
-        <>
-          <div>
-            <NavTabs tabs={tabs}>
-              {/* 投稿 */}
-              <div style={{ padding: 10 }}>
-                <TweetForm />
-              </div>
-              {/* ツイート */}
-              <div style={{ padding: 10, display: 'flex' }}>
-                <Grid container spacing={3}>
-                  <Grid item sm={3}>
-                    <div style={{ height: '100%' }}>
-                      <Typography variant={'h6'}>運営ツイート</Typography>
-                      <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-                        <TweetList tweets={props.list.self} deleteTweet={props.deleteTweet} />
+    <div className={classes.root}>
+      <div className={classes.content}>
+        {props.discord.username ? (
+          <>
+            <div>
+              <NavTabs tabs={tabs}>
+                {/* 投稿 */}
+                <div style={{ padding: 10 }}>
+                  <TweetForm />
+                </div>
+                {/* ツイート */}
+                <div style={{ padding: 10, display: 'flex' }}>
+                  <Grid container spacing={3}>
+                    <Grid item sm={4}>
+                      <div style={{ height: '100%' }}>
+                        <Typography variant={'h6'}>運営ツイート</Typography>
+                        <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                          <TweetList tweets={props.list.self} deleteTweet={props.deleteTweet} />
+                        </div>
                       </div>
-                    </div>
-                  </Grid>
-                  <Grid item sm={3}>
-                    <div style={{ height: '100%' }}>
-                      <Typography variant={'h6'}>検索</Typography>
-                      <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-                        <TweetList tweets={props.list.search} />
+                    </Grid>
+                    <Grid item sm={4}>
+                      <div style={{ height: '100%' }}>
+                        <Typography variant={'h6'}>検索</Typography>
+                        <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                          <TweetList tweets={props.list.search} />
+                        </div>
                       </div>
-                    </div>
-                  </Grid>
-                  <Grid item sm={3}>
-                    <div style={{ height: '100%' }}>
-                      <Typography variant={'h6'}>ハッシュタグ</Typography>
-                      <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-                        <TweetList tweets={props.list.hash} />
+                    </Grid>
+                    <Grid item sm={4}>
+                      <div style={{ height: '100%' }}>
+                        <Typography variant={'h6'}>ハッシュタグ</Typography>
+                        <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
+                          <TweetList tweets={props.list.hash} />
+                        </div>
                       </div>
-                    </div>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </div>
-              {/* リンク */}
-              <div style={{ padding: 10 }}>
-                <OtherInfo />
-              </div>
-            </NavTabs>
+                </div>
+                {/* リンク */}
+                <div style={{ padding: 10 }}>
+                  <OtherInfo />
+                </div>
+              </NavTabs>
+            </div>
+          </>
+        ) : (
+          <div className={classes.login}>
+            <Modal open={true}>
+              <Button color={'primary'} variant={'contained'} onClick={oauthDiscord}>
+                Discordでログイン
+              </Button>
+            </Modal>
           </div>
-          <Footer />
-
-          {/* 通知系 */}
-          <Dialog />
-          <Modal open={props.dialog.show} modalClose={props.closeModal}>
-            {props.dialog.message}
-          </Modal>
-          <Snackbar open={props.notify.show} message={props.notify.message} variant={props.notify.type} onClose={props.closeNotify} />
-        </>
-      ) : (
-        <div className={classes.login}>
-          <Modal open={true}>
-            <Button color={'primary'} variant={'contained'} onClick={oauthDiscord}>
-              Discordでログイン
-            </Button>
-          </Modal>
-        </div>
-      )}
+        )}
+      </div>
+      <Footer />
+      {/* 通知系 */}
+      <Dialog />
+      <Modal open={props.dialog.show} modalClose={props.closeModal}>
+        {props.dialog.message}
+      </Modal>
+      <Snackbar open={props.notify.show} message={props.notify.message} variant={props.notify.type} onClose={props.closeNotify} />
     </div>
   );
 };

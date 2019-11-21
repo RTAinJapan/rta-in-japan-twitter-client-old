@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '80vw',
-      padding: 5,
+      padding: 10,
       borderRadius: 5,
     },
     contents: {},

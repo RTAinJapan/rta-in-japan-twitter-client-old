@@ -10,7 +10,7 @@ const useStyles = makeStyles({
     position: 'sticky',
     top: 0,
     backgroundColor: 'white',
-    zIndex: 100000,
+    zIndex: 1000,
   },
   hidden: {
     display: 'hidden',
