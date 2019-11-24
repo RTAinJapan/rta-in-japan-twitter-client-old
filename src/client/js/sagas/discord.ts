@@ -1,20 +1,22 @@
-import { DiscordUser, OAuthToken } from '../types/discord';
+import { DiscordUser, OAuthToken, DiscordGuild, DiscordGuildMember, DiscordPartialGuild } from '../types/discord';
 import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
+import { RootState } from '../reducers';
 
 const baseUrl = 'https://discordapp.com/api/v6';
 const clientId = '627778242727641088';
-const clientSecret = 'QqZZjONOIyH4XnqlbexKgr_pFbBkeULV';
+const clientSecret = '';
 const redirectUrl = 'http://localhost:8080/login/discord';
-const scope = 'identify';
+const scope = 'identify%20guilds';
 
 /** Discord認証でトークンをもらうページに遷移する */
-export const oauthDiscord = () => {
-  const url = `https://discordapp.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUrl)}&response_type=code&scope=${scope}`;
+export const oauthDiscord = async () => {
+  const state = Math.random() * 100000000;
+  const url = `https://discordapp.com/api/oauth2/authorize?response_type=token&client_id=${clientId}&state=${state}&scope=${scope}`;
   window.location.replace(url);
 };
 
-/** Discordの認証コードがあればトークンを取得して保存する */
+/** Discordの認証コードを基に、トークンを取得して保存する */
 export const saveToken = async (): Promise<boolean> => {
   const code = localStorage.getItem('code');
   if (!code) return false;
@@ -80,22 +82,41 @@ const discordApi = async (api: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
+    if (result.status >= 400) throw new Error();
     return await result.json();
   } catch (error) {
-    console.error(error);
     return null;
   }
 };
 
 export function* loginCheck() {
-  let token = localStorage.getItem('discordToken');
-  if (!token) yield call(saveToken);
-  token = localStorage.getItem('discordToken');
+  try {
+    const state: RootState = yield select();
+    const config = state.reducer.config;
 
-  if (token) {
-    const user: DiscordUser = yield call(getCurrentUser);
-    yield put(actions.storeDiscordUserName(user.username));
-    yield put(actions.changeNotify(true, 'info', `ユーザ名：${user.username}`));
+    let token = localStorage.getItem('discordToken');
+    if (!token) {
+      yield call(saveToken);
+      token = localStorage.getItem('discordToken');
+    }
+
+    if (token) {
+      yield put(actions.changeNotify(true, 'info', 'ユーザ情報を取得しています。'));
+      // ユーザ情報を取得
+      const user: DiscordUser = yield call(getCurrentUser);
+      const userGuild: DiscordGuild[] = yield call(getUserGuild);
+      const guild = userGuild.filter(guild => guild.id === config.discord.guild);
+      if (guild.length === 0) throw new Error('このユーザは規定のサーバに所属していません。');
+      if (!config.discord.users.includes(user.id)) throw new Error('操作権限がありません。');
+
+      yield put(actions.storeDiscordUserName(user.username));
+      yield put(actions.changeNotify(true, 'info', `ユーザ名：${user.username}`));
+    } else {
+      yield call(logoutDiscord);
+    }
+  } catch (e) {
+    yield put(actions.changeDialog({ show: true, type: 'error', message: e.message }));
+    yield call(logoutDiscord);
   }
 }
 
@@ -103,8 +124,17 @@ export function* loginCheck() {
 export function* logoutDiscord() {
   localStorage.removeItem('code');
   localStorage.removeItem('discordToken');
+  localStorage.removeItem('discordExpire');
+  localStorage.removeItem('discordState');
   yield put(actions.storeDiscordUserName(null));
 }
 
 /** ログイン中のユーザ情報を取得 */
 export const getCurrentUser = (): Promise<DiscordUser> => discordApi('/users/@me');
+
+/** 指定したサーバの情報を取得 */
+export const getGuild = (guildId: string): Promise<DiscordGuild> => discordApi(`/guilds/${guildId}`);
+
+export const getUserGuild = (): Promise<DiscordPartialGuild[]> => discordApi('/users/@me/guilds');
+
+export const getGuildMember = (guildId: string, userId: string): Promise<DiscordGuildMember> => discordApi(`/guilds/${guildId}/members/${userId}`);

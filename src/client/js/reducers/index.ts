@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 import * as actions from '../actions';
-import { Tweets, PreviewFile } from '../types/global';
+import { Tweets, PreviewFile, Config } from '../types/global';
 type Action = ActionType<typeof actions>;
 
 export type DialogState = {
@@ -43,6 +43,8 @@ export type GlobalState = {
   post: {
     media: PreviewFile[];
   };
+  /** 設定ファイルの内容 */
+  config: Config;
 };
 
 export type RootState = {
@@ -84,10 +86,20 @@ const initial: GlobalState = {
   post: {
     media: [],
   },
+  config: {
+    discord: {
+      guild: '',
+      roles: [],
+      users: [],
+    },
+  },
 };
 
 const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
   switch (action.type) {
+    case getType(actions.storeConfig): {
+      return { ...state, config: action.payload };
+    }
     // 通知
     case getType(actions.changeNotify): {
       return { ...state, notify: { ...action.payload } };

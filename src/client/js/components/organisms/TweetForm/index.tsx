@@ -6,7 +6,7 @@ import Modal from '../../molecules/Modal';
 import { GlobalState, RootState } from '../../../reducers';
 import { TextField, Button, Paper, Grid } from '@material-ui/core';
 import Dropzone from 'react-dropzone';
-import { countStr } from '../../../service/twitterUtil';
+import { countStr } from '../../../sagas/twitterUtil';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

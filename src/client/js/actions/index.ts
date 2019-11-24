@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { Tweets, PreviewFile } from '../types/global';
+import { Tweets, PreviewFile, Config } from '../types/global';
 import { DialogState } from '../reducers';
 
 const OPEN_NOTIFY = 'OPEN_NOTIFY';
@@ -16,6 +16,14 @@ const DIALOG_NO = 'DIALOG_NO';
 
 const UPLOAD_MEDIA = 'UPLOAD_MEDIA';
 const STORE_MEDIA = 'STORE_MEDIA';
+
+const LOGOUT_DISCORD = 'LOGOUT_DISCORD';
+const STORE_DISCORD_USER_NAME = 'STORE_DISCORD_USER_NAME';
+
+const STORE_CONFIG = 'STORE_CONFIG';
+export const storeConfig = createAction(STORE_CONFIG, action => {
+  return (config: Config) => action(config);
+});
 
 /** 通知欄表示 */
 export const changeNotify = createAction(OPEN_NOTIFY, action => {
@@ -64,13 +72,11 @@ export const storeMedia = createAction(STORE_MEDIA, action => {
 });
 
 // Discord
-const LOGOUT_DISCORD = 'LOGOUT_DISCORD';
 /** ログアウトする */
 export const logoutDiscord = createAction(LOGOUT_DISCORD, action => {
   return () => action();
 });
 
-const STORE_DISCORD_USER_NAME = 'STORE_DISCORD_USER_NAME';
 /** Discordのユーザ名を格納 */
 export const storeDiscordUserName = createAction(STORE_DISCORD_USER_NAME, action => {
   return (username: string | null) => action(username);

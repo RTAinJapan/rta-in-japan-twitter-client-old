@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'black',
     },
     error: {
-      backgroundColor: 'red',
+      backgroundColor: '#ff4444',
       color: 'black',
     },
     control: {

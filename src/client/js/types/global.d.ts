@@ -22,3 +22,15 @@ export type Tweets = {
 export type PreviewFile = File & {
   preview: any;
 };
+
+export type Config = {
+  /** Discordの設定 */
+  discord: {
+    /** サーバID */
+    guild: string;
+    /** 権限ID */
+    roles: string[];
+    /** この画面を操作できるユーザID。 */
+    users: string[];
+  };
+};

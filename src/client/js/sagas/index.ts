@@ -2,10 +2,11 @@ import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
 import { confirmSaga } from './dialog';
 import { RootState } from '../reducers';
-import { PreviewFile } from '../types/global';
-import { loginCheck, logoutDiscord } from '../service/discord';
+import { PreviewFile, Config } from '../types/global';
+import { loginCheck, logoutDiscord } from './discord';
 
 export default function* rootSaga() {
+  yield call(fetchConfig);
   yield call(fetchListAndApplyState);
   yield takeEvery(actions.submitTweet, submitTweet);
   yield takeEvery(actions.deleteTweet, deleteTweet);
@@ -14,6 +15,31 @@ export default function* rootSaga() {
   yield call(loginCheck);
 }
 
+/**
+ * JSONファイルの取得
+ * @param url 取得先のURL
+ * @return JSONオブジェクト
+ * @throws 通信エラー
+ * @throws JSON変換エラー
+ */
+const fetchJson = async (url: string) => {
+  const result = await fetch(url);
+  const config = await result.json();
+  return config;
+};
+
+function* fetchConfig() {
+  try {
+    const config: Config = yield call(fetchJson, './config.json');
+    yield put(actions.storeConfig(config));
+  } catch (e) {
+    yield put(actions.changeDialog({ show: true, type: 'error', message: 'エラーが発生しました。' }));
+  }
+}
+
+/**
+ * 初期データ取得
+ */
 function* fetchListAndApplyState() {
   try {
     yield put(actions.changeNotify(true, 'info', 'データ取得中'));
@@ -28,6 +54,10 @@ function* fetchListAndApplyState() {
   }
 }
 
+/**
+ * ツイート送信ボタンの処理
+ * @param action
+ */
 function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
   try {
     const result = yield call(confirmSaga, 'ツイートを送信します。よろしいですか？', 'info', `${action.payload}`);
@@ -54,7 +84,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
 }
 
 /**
- * アップロード対象としてメディアが登録された時の動き
+ * アップロード対象としてメディアが登録された時の処理
  * @param action
  */
 function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
@@ -91,6 +121,6 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
 
     yield put(actions.storeMedia([...orgMedia, nowMedia as PreviewFile]));
   } catch (e) {
-    alert(e.message);
+    yield put(actions.changeDialog({ show: true, type: 'error', message: e.message }));
   }
 }
