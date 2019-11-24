@@ -104,8 +104,8 @@ export function* loginCheck() {
       yield put(actions.changeNotify(true, 'info', 'ユーザ情報を取得しています。'));
       // ユーザ情報を取得
       const user: DiscordUser = yield call(getCurrentUser);
-      const userGuild: DiscordGuild[] = yield call(getUserGuild);
-      const guild = userGuild.filter(guild => guild.id === config.discord.guild);
+      const userGuildList: DiscordGuild[] = yield call(getUserGuild);
+      const guild = userGuildList.filter(userGuild => userGuild.id === config.discord.guild);
       if (guild.length === 0) throw new Error('このユーザは規定のサーバに所属していません。');
       if (!config.discord.users.includes(user.id)) throw new Error('操作権限がありません。');
 
@@ -115,6 +115,7 @@ export function* loginCheck() {
       yield call(logoutDiscord);
     }
   } catch (e) {
+    yield put(actions.closeNotify());
     yield put(actions.changeDialog({ show: true, type: 'error', message: e.message }));
     yield call(logoutDiscord);
   }
