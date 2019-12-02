@@ -22,7 +22,9 @@
     },
     "autoload": {
         "psr-4": {
-            "yagamuu\\TwitterClientForRtainjapan\\": "src/"
+            "yagamuu\\TwitterClientForRtainjapan\\": "src/",
+            "yagamuu\\TwitterClientForRtainjapan\\Tests\\": "tests/",
+            "yagamuu\\TwitterClientForRtainjapan\\Tests\\Examples\\": "tests/examples"
         }
     },
     "require-dev": {

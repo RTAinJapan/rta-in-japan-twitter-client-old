@@ -6,8 +6,10 @@ use mpyw\Co\Co;
 
 class Twitter
 {
-    private $client;
-    private $cache;
+    protected $client;
+    
+    /** @var Cache */
+    protected $cache;
 
     public function __construct($client, $cache)
     {
@@ -57,13 +59,6 @@ class Twitter
         $errors = [];
         $informations = [];
 
-        if (!self::checkToken()) {
-            return [
-                'errors' => $errors,
-                'informations' => $informations
-            ];
-        }
-
         try {
             $status = $this->client->post('statuses/destroy', [
                 'id' => $id
@@ -87,7 +82,7 @@ class Twitter
         ];
     }
 
-    public function postTweet()
+    public function postTweet($tweet_text, $files)
     {
         $result = [
             'errors' => [],
@@ -95,13 +90,9 @@ class Twitter
         ];
         $uploads = [];
 
-        if (!self::checkToken()) {
-            return $result;
-        }
-
         // 各ファイルをチェック
         $videoOrAnimeGifFlag = false;
-        foreach ($_FILES['media']['error'] as $key => $error) {
+        foreach ($files['media']['error'] as $key => $error) {
             try {
                 // 更に配列がネストしていれば不正とする
                 if (!is_int($error)) {
@@ -111,7 +102,7 @@ class Twitter
                 // 値を確認
                 switch ($error) {
                     case UPLOAD_ERR_OK: // OK
-                        $file = $_FILES['media']['tmp_name'][$key];
+                        $file = $files['media']['tmp_name'][$key];
                         $uploads[] = $file;
                         if (self::isVideoFile($file) || self::isAnimeGif($file)) {
                             $videoOrAnimeGifFlag = true;
@@ -133,15 +124,14 @@ class Twitter
                 $result['errors'][] = $e->getMessage();
             }
         }
-
         if (count($result['errors'])) {
             return $result;
         }
 
         if (count($uploads)) {
-            $result = $this->tweetMedia($uploads, $videoOrAnimeGifFlag);
-        } elseif (isset($_POST["body"]) && $_POST["body"] !== '') {
-            $result = $this->tweetText();
+            $result = $this->tweetMedia($tweet_text, $uploads, $videoOrAnimeGifFlag);
+        } elseif (isset($tweet_text) && $tweet_text !== '') {
+            $result = $this->tweetText($tweet_text);
         }
 
         // キャッシュの更新
@@ -152,13 +142,13 @@ class Twitter
         return $result;
     }
 
-    private function tweetText()
+    private function tweetText($text)
     {
         $errors = [];
         $informations = [];
         try {
             $status = $this->client->post('statuses/update', [
-                'status' => $_POST["body"],
+                'status' => $text,
             ]);
         
             $informations[] = [
@@ -175,13 +165,13 @@ class Twitter
         ];
     }
 
-    private function tweetMedia($files, $isVideo = false)
+    private function tweetMedia($text, $files, $isVideo = false)
     {
         $errors = [];
         $informations  = [];
 
         try {
-            $informations = Co::wait(function () use ($informations, $files, $isVideo) {
+            $informations = Co::wait(function () use ($informations, $text, $files, $isVideo) {
                 $status = [];
                 $media_ids = [];
                 // 通常の画像
@@ -205,7 +195,7 @@ class Twitter
                 }
 
                 $status = yield $this->client->postAsync('statuses/update', [
-                    'status' => $_POST["body"] ?? '',
+                    'status' => $text ?? '',
                     'media_ids' => $media_ids,
                 ]);
                 $informations[] = [
@@ -250,13 +240,5 @@ class Twitter
         $imagick->clear();
 
         return $image_frames > 1;
-    }
-
-    private static function checkToken()
-    {
-        $session_token = $_SESSION['token'] ?? '';
-        $post_token = $_POST['token'] ?? '';
-
-        return ($post_token === '' || $post_token !== $session_token) ? false : true;
     }
 }

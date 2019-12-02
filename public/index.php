@@ -43,11 +43,16 @@ $view = [
     'mentions_timelines' => [],
 ];
 
-if (isset($_POST["delete"]) && $_POST["delete"] !== '') {
-    $view = array_merge_recursive($view, $twitter->deleteTweet($_POST["delete"]));
-} elseif (isset($_FILES['media']['error']) && is_array($_FILES['media']['error'])) {
-    // 投稿
-    $view = array_merge_recursive($view, $twitter->postTweet());
+$method = $_SERVER['REQUEST_METHOD'];
+
+// 正常なトークンを持つPOSTリクエストかどうかをチェック
+if ($method === 'POST' && $post_token !== '' && $post_token === $session_token) {
+    if (isset($_POST["delete"]) && $_POST["delete"] !== '') {
+        $view = array_merge_recursive($view, $twitter->deleteTweet($_POST["delete"]));
+    } elseif (isset($_FILES['media']['error']) && is_array($_FILES['media']['error'])) {
+        // 投稿
+        $view = array_merge_recursive($view, $twitter->postTweet($_POST['body'], $_FILES));
+    }
 }
 
 // タイムライン取得
