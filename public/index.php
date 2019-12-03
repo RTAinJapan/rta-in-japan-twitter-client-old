@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -7,7 +8,7 @@ use yagamuu\TwitterClientForRtainjapan\Twitter;
 use Phpfastcache\CacheManager;
 use Phpfastcache\Config\Config;
 
-session_start();
+$session = $_SESSION;
 date_default_timezone_set('Asia/Tokyo');
 $basedir = __DIR__ . '/../';
 
@@ -46,6 +47,8 @@ $view = [
 $method = $_SERVER['REQUEST_METHOD'];
 
 // 正常なトークンを持つPOSTリクエストかどうかをチェック
+$post_token = $_POST['token'] ?? '';
+$session_token = $_SESSION['token'] ?? null;
 if ($method === 'POST' && $post_token !== '' && $post_token === $session_token) {
     if (isset($_POST["delete"]) && $_POST["delete"] !== '') {
         $view = array_merge_recursive($view, $twitter->deleteTweet($_POST["delete"]));
