@@ -225,12 +225,18 @@ class Twitter
 
     private static function isVideoFile($file)
     {
-        return in_array(mime_content_type($file), ['video/mp4', 'video/quicktime', 'video/x-m4v'], true);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $file);
+        finfo_close($finfo);
+        return in_array($mime_type, ['video/mp4', 'video/quicktime', 'video/x-m4v'], true);
     }
 
     private static function isAnimeGif($file)
     {
-        if (mime_content_type($file) !== 'image/gif') {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $file);
+        finfo_close($finfo);
+        if ($mime_type !== 'image/gif') {
             return false;
         }
 
