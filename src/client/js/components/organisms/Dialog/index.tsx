@@ -4,10 +4,10 @@ import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import * as actions from '../../../actions';
 import Modal from '../../molecules/Modal';
 import { RootState, DialogState } from '../../../reducers';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, MuiThemeProvider } from '@material-ui/core';
 import classNames from 'classnames';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       width: '80vw',
@@ -36,6 +36,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
+const theme: Partial<Theme> = {
+  overrides: {
+    MuiFilledInput: {
+      multiline: {
+        padding: 10,
+      },
+    },
+  },
+};
 
 type ComponentProps = DialogState;
 type ActionProps = typeof mapDispatchToProps;
@@ -81,7 +91,11 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
 
   const detailArea = (detail: string) => {
     if (detail) {
-      return <TextField rowsMax={5} variant={'filled'} multiline={true} defaultValue={detail} InputProps={{ readOnly: true }} fullWidth={true} />;
+      return (
+        <MuiThemeProvider theme={theme}>
+          <TextField rowsMax={10} rows={5} variant={'filled'} multiline={true} defaultValue={detail} InputProps={{ readOnly: true }} fullWidth={true} />
+        </MuiThemeProvider>
+      );
     } else {
       return '';
     }

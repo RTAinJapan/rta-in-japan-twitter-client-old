@@ -29,19 +29,19 @@ const Tweet: React.SFC<PropsType> = (props: PropsType) => {
 
   return (
     <Paper className={classes.root}>
-      <Avatar src={props.icon} />
+      <Avatar src={props.user.profile_image_url_https} />
       <div style={{ marginLeft: 5 }}>
         <div>
           <Typography style={{ fontWeight: 'bold' }} variant={'subtitle1'} display={'inline'}>
-            {props.displayName}
+            {props.user.name}
           </Typography>
           <span className={classes.screenName}>
             <Typography variant={'caption'} display={'inline'}>
-              @{props.screenName}
+              @{props.user.screen_name}
             </Typography>
           </span>
         </div>
-        <Typography>{props.message}</Typography>
+        <Typography>{props.text}</Typography>
       </div>
     </Paper>
   );

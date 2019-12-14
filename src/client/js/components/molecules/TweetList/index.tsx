@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Tweets } from '../../../types/global';
-import Tweet from '../../molecules/Tweet';
+import Tweet from '../Tweet';
 import ClearIcon from '@material-ui/icons/Clear';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -51,10 +51,10 @@ const TweetList: React.SFC<PropsType> = props => {
     <Paper className={classes.root}>
       {props.tweets.length === 0 && <div className={classes.tweetContent}>{label.noTweet}</div>}
       {props.tweets.map((item, index) => (
-        <div className={classes.tweet} key={`${item.idStr}_${index}`}>
+        <div className={classes.tweet} key={`${item.id_str}_${index}`}>
           <Tooltip title={label.delete}>
             <span>
-              <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.idStr)} disabled={!props.deleteTweet}>
+              <Fab className={classes.button} color={'secondary'} size={'small'} onClick={handleDeleteButton(item.id_str)} disabled={!props.deleteTweet}>
                 <ClearIcon />
               </Fab>
             </span>

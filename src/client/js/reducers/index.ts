@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 import * as actions from '../actions';
-import { Tweets, PreviewFile, Config } from '../types/global';
+import { Tweets, PreviewFile, Config, Game } from '../types/global';
 type Action = ActionType<typeof actions>;
 
 export type DialogState = {
@@ -32,32 +32,30 @@ export type GlobalState = {
   /** ダイアログ */
   dialog: DialogState;
   /** ツイート一覧 */
-  list: {
+  twitterTimeline: {
     /** 自分の結果 */
-    self: Tweets[];
+    user: Tweets[];
+    /** メンションの結果 */
+    mention: Tweets[];
     /** ハッシュタグで検索した結果 */
     hash: Tweets[];
-    /** ワード検索の結果 */
-    search: Tweets[];
   };
+  /** Twitterに投稿する内容 */
   post: {
-    media: PreviewFile[];
+    text: string;
+    media: {
+      media_id_string: string;
+      file: PreviewFile;
+    }[];
   };
+  /** ゲーム情報 */
+  game: Game[];
   /** 設定ファイルの内容 */
   config: Config;
 };
 
 export type RootState = {
   reducer: GlobalState;
-};
-
-const tweet = {
-  idStr: '1212',
-  icon: './images/rtainjapan-icon.png',
-  message: 'あいうえおあいうえおあいうえおあいうえおあいうえお\nかきくけこnかきくけこ',
-  dateStr: '2019',
-  displayName: 'RTA走り太郎',
-  screenName: 'rta_runner',
 };
 
 const initial: GlobalState = {
@@ -78,19 +76,36 @@ const initial: GlobalState = {
     username: null,
     token: null,
   },
-  list: {
-    self: [tweet, tweet, tweet, tweet, tweet, tweet, tweet, tweet],
-    hash: [tweet],
-    search: [],
+  twitterTimeline: {
+    user: [],
+    mention: [],
+    hash: [],
   },
   post: {
+    text: '',
     media: [],
   },
+  game: [],
   config: {
+    api: {
+      twitterBase: '',
+      runner: '',
+    },
     discord: {
+      config: {
+        baseUrl: '',
+        clientId: '',
+        clientSecret: '',
+        redirectUrl: '',
+        scope: '',
+      },
       guild: '',
       roles: [],
       users: [],
+    },
+    tweetTemplate: {
+      text: [],
+      footer: '',
     },
   },
 };
@@ -105,7 +120,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
       return { ...state, notify: { ...action.payload } };
     }
     case getType(actions.closeNotify): {
-      return { ...state, notify: { ...initial.notify } };
+      return { ...state, notify: { ...state.notify, show: false } };
     }
     // ダイアログ
     case getType(actions.changeDialog): {
@@ -118,9 +133,18 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
     case getType(actions.updateTweetList): {
       return {
         ...state,
-        list: {
-          ...state.list,
+        twitterTimeline: {
+          ...state.twitterTimeline,
           [action.payload.type]: action.payload.list,
+        },
+      };
+    }
+    case getType(actions.updateTweetText): {
+      return {
+        ...state,
+        post: {
+          ...state.post,
+          text: action.payload,
         },
       };
     }
@@ -128,6 +152,7 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
       return {
         ...state,
         post: {
+          ...state.post,
           media: action.payload,
         },
       };
@@ -140,6 +165,12 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
           ...state.discord,
           username: action.payload,
         },
+      };
+    }
+    case getType(actions.updateGameList): {
+      return {
+        ...state,
+        game: action.payload,
       };
     }
     default:

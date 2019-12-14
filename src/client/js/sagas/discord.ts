@@ -1,27 +1,27 @@
 import { DiscordUser, OAuthToken, DiscordGuild, DiscordGuildMember, DiscordPartialGuild } from '../types/discord';
-import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
+import { select, call, put } from 'redux-saga/effects';
 import * as actions from '../actions';
 import { RootState } from '../reducers';
+import { Config } from '../types/global';
 
 const baseUrl = 'https://discordapp.com/api/v6';
-const clientId = '627778242727641088';
-const clientSecret = '';
-const redirectUrl = 'http://localhost:8080/login/discord';
-const scope = 'identify%20guilds';
 
 /** Discord認証でトークンをもらうページに遷移する */
-export const oauthDiscord = async () => {
-  const state = Math.random() * 100000000;
-  const url = `https://discordapp.com/api/oauth2/authorize?response_type=token&client_id=${clientId}&state=${state}&scope=${scope}`;
+export function* oauthDiscord() {
+  const state: RootState = yield select();
+  const config: Config['discord']['config'] = state.reducer.config.discord.config;
+
+  const discordState = Math.random() * 100000000;
+  const url = `https://discordapp.com/api/oauth2/authorize?response_type=token&client_id=${config.clientId}&state=${discordState}&scope=${config.scope}`;
   window.location.replace(url);
-};
+}
 
 /** Discordの認証コードを基に、トークンを取得して保存する */
-export const saveToken = async (): Promise<boolean> => {
+export const saveToken = async (config: Config['discord']['config']): Promise<boolean> => {
   const code = localStorage.getItem('code');
   if (!code) return false;
 
-  const result = await getAccessToken(code);
+  const result = await getAccessToken(config, code);
   if (!result) {
     // コードがあるのに取得に失敗したということは、通信エラーか無効なコードになっている
     localStorage.removeItem('code');
@@ -36,17 +36,17 @@ export const saveToken = async (): Promise<boolean> => {
  * 認証後のcodeからアクセストークンを得る
  * @param code
  */
-const getAccessToken = async (code: string): Promise<OAuthToken | null> => {
+const getAccessToken = async (config: Config['discord']['config'], code: string): Promise<OAuthToken | null> => {
   try {
-    const url = `${baseUrl}/oauth2/token`;
+    const url = `${config.baseUrl}/oauth2/token`;
 
     const body = {
-      scope,
+      scope: config.scope,
       code,
-      client_id: clientId,
-      client_secret: clientSecret,
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
       grant_type: 'authorization_code',
-      redirect_uri: encodeURIComponent(redirectUrl),
+      redirect_uri: encodeURIComponent(config.redirectUrl),
     };
 
     const result = await fetch(url, {
@@ -96,7 +96,7 @@ export function* loginCheck() {
 
     let token = localStorage.getItem('discordToken');
     if (!token) {
-      yield call(saveToken);
+      yield call(saveToken, state.reducer.config.discord.config);
       token = localStorage.getItem('discordToken');
     }
 
@@ -105,6 +105,11 @@ export function* loginCheck() {
       // ユーザ情報を取得
       const user: DiscordUser = yield call(getCurrentUser);
       const userGuildList: DiscordGuild[] = yield call(getUserGuild);
+      if (!userGuildList) {
+        yield call(logoutDiscord);
+        return;
+      }
+
       const guild = userGuildList.filter(userGuild => userGuild.id === config.discord.guild);
       if (guild.length === 0) throw new Error('このユーザは規定のサーバに所属していません。');
       if (!config.discord.users.includes(user.id)) throw new Error('操作権限がありません。');

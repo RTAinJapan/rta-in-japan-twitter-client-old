@@ -8,7 +8,6 @@ const useStyles = makeStyles({
   root: {
     flexGrow: 1,
     position: 'sticky',
-    top: 0,
     backgroundColor: 'white',
     zIndex: 1000,
   },
@@ -18,9 +17,13 @@ const useStyles = makeStyles({
 });
 
 type ComponentProps = {
+  style: {
+    top?: number;
+    bottom?: number;
+  };
   tabs: {
     label: string;
-    icon: React.ReactElement;
+    icon?: React.ReactElement;
   }[];
 };
 
@@ -38,14 +41,32 @@ const NavTabs: React.SFC<ComponentProps & React.Props<{}>> = props => {
     });
   };
 
+  const createContent = (children: any) => {
+    return (
+      <div>
+        {children.map((child: React.ReactNode, index: number) => {
+          if (index === tabIndex) {
+            return <div key={index}>{child}</div>;
+          } else {
+            return (
+              <div key={index} style={{ display: 'none' }}>
+                {child}
+              </div>
+            );
+          }
+        })}
+      </div>
+    );
+  };
+
   return (
     <>
-      <Paper square className={classes.root}>
+      <Paper square className={classes.root} style={{ top: props.style.top, bottom: props.style.bottom }}>
         <Tabs value={tabIndex} onChange={handleChange} variant="fullWidth" indicatorColor="primary" textColor="primary">
           {createTab(props.tabs)}
         </Tabs>
       </Paper>
-      {props.children && props.children[tabIndex] && <div>{props.children[tabIndex]}</div>}
+      {createContent(props.children)}
     </>
   );
 };

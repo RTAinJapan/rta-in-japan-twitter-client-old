@@ -1,5 +1,5 @@
 import { createAction } from 'typesafe-actions';
-import { Tweets, PreviewFile, Config } from '../types/global';
+import { Tweets, PreviewFile, Config, Game } from '../types/global';
 import { DialogState } from '../reducers';
 
 const OPEN_NOTIFY = 'OPEN_NOTIFY';
@@ -8,6 +8,7 @@ const OPEN_DIALOG = 'OPEN_DIALOG';
 const CLOSE_DIALOG = 'CLOSE_DIALOG';
 
 const UPDATE_TWEET_LIST = 'UPDATE_TWEET_LIST';
+const UPDATE_TWEET_TEXT = 'UPDATE_TWEET_TEXT';
 const SUBMIT_TWEET = 'SUBMIT_TWEET';
 const DELETE_TWEET = 'DELETE_TWEET';
 
@@ -16,7 +17,9 @@ const DIALOG_NO = 'DIALOG_NO';
 
 const UPLOAD_MEDIA = 'UPLOAD_MEDIA';
 const STORE_MEDIA = 'STORE_MEDIA';
+const DELETE_MEDIA = 'DELETE_MEDIA';
 
+const LOGIN_DISCORD = 'LOGIN_DISCORD';
 const LOGOUT_DISCORD = 'LOGOUT_DISCORD';
 const STORE_DISCORD_USER_NAME = 'STORE_DISCORD_USER_NAME';
 
@@ -48,7 +51,11 @@ export const dialogNo = createAction(DIALOG_NO, action => {
 
 /** ツイート取得結果更新 */
 export const updateTweetList = createAction(UPDATE_TWEET_LIST, action => {
-  return (list: Tweets[], type: 'self' | 'hash' | 'search') => action({ list, type });
+  return (list: Tweets[], type: 'user' | 'hash' | 'mention') => action({ list, type });
+});
+
+export const updateTweetText = createAction(UPDATE_TWEET_TEXT, action => {
+  return (text: string) => action(text);
 });
 
 /** ツイート送信 */
@@ -68,10 +75,20 @@ export const uploadMedia = createAction(UPLOAD_MEDIA, action => {
 
 /** アップロードするファイルをリストに登録 */
 export const storeMedia = createAction(STORE_MEDIA, action => {
-  return (file: PreviewFile[]) => action(file);
+  return (medias: { file: PreviewFile; media_id_string: string }[]) => action(medias);
+});
+
+/** アップロードするファイルを取消 */
+export const deleteMedia = createAction(DELETE_MEDIA, action => {
+  return (index: number) => action(index);
 });
 
 // Discord
+/** ログインする */
+export const loginDiscord = createAction(LOGIN_DISCORD, action => {
+  return () => action();
+});
+
 /** ログアウトする */
 export const logoutDiscord = createAction(LOGOUT_DISCORD, action => {
   return () => action();
@@ -80,4 +97,11 @@ export const logoutDiscord = createAction(LOGOUT_DISCORD, action => {
 /** Discordのユーザ名を格納 */
 export const storeDiscordUserName = createAction(STORE_DISCORD_USER_NAME, action => {
   return (username: string | null) => action(username);
+});
+
+// ゲーム情報
+const UPDATE_GAME_LIST = 'UPDATE_GAME_LIST';
+/** ゲーム情報更新 */
+export const updateGameList = createAction(UPDATE_GAME_LIST, action => {
+  return (game: Game[]) => action(game);
 });

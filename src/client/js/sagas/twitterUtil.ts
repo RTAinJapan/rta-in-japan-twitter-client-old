@@ -1,3 +1,8 @@
+import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
+import { RootState } from '../reducers';
+import { fetchJson, postFile, postJson } from './common';
+import { Tweets, TwitterAPI } from '../types/global';
+
 /**
  * Twitterのルールに則り、文字数カウントを行う
  * @param baseStr カウント対象の文字
@@ -29,4 +34,53 @@ export const countStr = (baseStr: string): number => {
   const strLen = urlNum * 11.5 + halfStr.length * 0.5 + fullStr.length;
 
   return strLen;
+};
+
+const getStatusesUserTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
+  const url = `${hostBase}statuses/user_timeline/`;
+  const result = await fetchJson(url);
+  return result;
+};
+
+const getStatusesMentionsTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
+  const url = `${hostBase}statuses/mentions_timeline/`;
+  const result = await fetchJson(url);
+  return result;
+};
+
+const getStatusesHash = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
+  const url = `${hostBase}statuses/hash/`;
+  const result = await fetchJson(url);
+  return result;
+};
+
+const postStatusesUpdate = async (hostBase: string, text: string, mediaIds: string[]): Promise<TwitterAPI<Tweets[]>> => {
+  const url = `${hostBase}statuses/update/`;
+  const postObject = {
+    status: text,
+    media_ids: mediaIds,
+  };
+  const result = await postJson(url, postObject);
+  return result;
+};
+
+const postMediaUpload = async (hostBase: string, file: File): Promise<TwitterAPI<{ media_id_string: string }>> => {
+  const url = `${hostBase}media/upload/`;
+  const result = await postFile(url, file);
+  return result;
+};
+
+const postStatusesDestroy = async (hostBase: string, id: string): Promise<TwitterAPI<undefined>> => {
+  const url = `${hostBase}statuses/destroy/${id}`;
+  const result = await postJson(url, {});
+  return result;
+};
+
+export const twitterApi = {
+  getStatusesUserTimeLine,
+  getStatusesMentionsTimeLine,
+  getStatusesHash,
+  postStatusesUpdate,
+  postMediaUpload,
+  postStatusesDestroy,
 };

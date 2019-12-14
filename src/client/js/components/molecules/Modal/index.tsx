@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme: Theme) =>
     paper: {
       position: 'absolute',
       backgroundColor: 'initial',
-      boxShadow: theme.shadows[5],
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

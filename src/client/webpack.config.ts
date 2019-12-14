@@ -13,7 +13,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const commonConfig: Partial<Configuration> = {
   mode: isProduction ? 'production' : 'development',
-  devtool: isProduction ? 'inline-source-map' : 'cheap-source-map',
+  devtool: isProduction ? 'inline-source-map' : 'source-map',
   resolve: {
     extensions: ['.js', '.ts', '.tsx'],
   },
@@ -84,7 +84,7 @@ const config: Configuration = {
           // nameCache: null,
           ie8: false,
           keep_classnames: undefined,
-          keep_fnames: false,
+          keep_fnames: true,
           safari10: true,
         },
       }),
