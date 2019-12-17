@@ -2,11 +2,11 @@ import React from 'react';
 
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import Component from '.';
-import { Tweets } from '../../../types/global';
+import Component, { ComponentProps } from '.';
+import { ArrayItem } from '../../../types/global';
 
-const tweet: Tweets = {
-  idStr: '0123456789012345678901234567890123456789',
+const tweet: ArrayItem<ComponentProps['tweets']> = {
+  id_str: '0123456789012345678901234567890123456789',
   text:
     'あいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこ\nあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこあいうえおかきくけこ',
   user: {

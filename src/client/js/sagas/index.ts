@@ -17,8 +17,8 @@ export default function* rootSaga() {
   yield takeEvery(actions.deleteMedia, deleteMedia);
 
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
-  yield call(loginCheck);
-  // yield put(actions.storeDiscordUserName('テストユーザ'));
+  // yield call(loginCheck);
+  yield put(actions.storeDiscordUserName('テストユーザ'));
   yield call(fetchTweetListAndApplyState);
   yield call(fetchGameListAndApplyState);
 }
@@ -26,7 +26,8 @@ export default function* rootSaga() {
 function* errorHandler(error: any) {
   try {
     const message = (error.message as string) || '予期せぬエラーが発生しました。';
-    yield put(actions.changeDialog({ show: true, type: 'error', message }));
+    yield put(actions.changeNotify(true, 'error', message));
+    yield put(actions.updateStatus('error'));
   } catch (e) {
     console.error('★激辛だ★');
   }
@@ -100,6 +101,8 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
 
     const result = yield call(confirmSaga, 'ツイートを送信します。よろしいですか？', 'info', `${action.payload}`);
     if (!result) return;
+
+    yield put(actions.updateStatus('posting'));
     yield put(actions.updateTweetText(action.payload));
 
     const mediaIds: string[] = state.reducer.post.media.map(media => media.media_id_string);
@@ -116,6 +119,7 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
 
     yield put(actions.updateTweetText(''));
     yield put(actions.changeNotify(true, 'info', 'ツイートしました。'));
+    yield put(actions.updateStatus('ok'));
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -133,6 +137,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
     const isContinue = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
     if (!isContinue) return;
 
+    yield put(actions.updateStatus('posting'));
     // 削除実行
     const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
     if (result.error) throw result.error;
@@ -142,6 +147,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
     yield put(actions.updateTweetList(newTweetList.data, 'user'));
 
     yield put(actions.changeNotify(true, 'info', '削除完了'));
+    yield put(actions.updateStatus('ok'));
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -168,13 +174,18 @@ function* deleteMedia(action: ReturnType<typeof actions.deleteMedia>) {
  */
 function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
   try {
-    const nowMedia = action.payload[0];
-
     const state: RootState = yield select();
     const orgMedia = state.reducer.post.media;
+    const nowMedia = action.payload[0];
+
+    // 何かやってる最中は処理終了
+    if (['posting', 'uploading'].includes(state.reducer.status)) return;
 
     // チェック
     try {
+      // 規定の種別以外のファイル
+      if (action.payload.length === 0) throw new Error('不正な拡張子のファイルです。');
+
       // 同名のファイルは不可
       for (const media of orgMedia) {
         if (media.file.name === nowMedia.name) throw new Error('同名のファイルは選択できません。');
@@ -199,7 +210,8 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
     (nowMedia as PreviewFile).preview = URL.createObjectURL(nowMedia);
 
     console.debug(nowMedia);
-    yield put(actions.changeNotify(true, 'info', 'ファイルアップロード中'));
+    yield put(actions.updateStatus('uploading'));
+    yield put(actions.changeNotify(true, 'info', 'ファイルアップロード中', false));
     const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, nowMedia);
     if (uploadResult.error) throw uploadResult.error;
 
@@ -213,6 +225,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
       ]),
     );
     yield put(actions.changeNotify(true, 'info', 'ファイルアップロード完了'));
+    yield put(actions.updateStatus('ok'));
   } catch (error) {
     yield call(errorHandler, error);
   }

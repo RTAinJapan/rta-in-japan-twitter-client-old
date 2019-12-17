@@ -4,8 +4,10 @@ import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import * as actions from '../../../actions';
 import Modal from '../../molecules/Modal';
 import { RootState, DialogState } from '../../../reducers';
-import { Button, TextField, MuiThemeProvider } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 import classNames from 'classnames';
+import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 
 const useStyles = makeStyles(() =>
   createStyles({

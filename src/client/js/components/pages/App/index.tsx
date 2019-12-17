@@ -115,7 +115,7 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
       <Modal open={props.dialog.show} modalClose={props.closeModal}>
         {props.dialog.message}
       </Modal>
-      <Snackbar open={props.notify.show} message={props.notify.message} variant={props.notify.type} onClose={props.closeNotify} />
+      <Snackbar open={props.notify.show} message={props.notify.message} variant={props.notify.type} closable={props.notify.closable} onClose={props.closeNotify} />
     </div>
   );
 };

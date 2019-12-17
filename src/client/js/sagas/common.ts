@@ -8,9 +8,13 @@ import fetchJsonpLib from 'fetch-jsonp';
  * @throws JSON変換エラー
  */
 export const fetchJson = async (url: string) => {
-  const result = await fetch(url);
-  const config = await result.json();
-  return config;
+  try {
+    const result = await fetch(url);
+    const config = await result.json();
+    return config;
+  } catch (e) {
+    throw new Error('通信エラーが発生しました。');
+  }
 };
 
 /**
@@ -35,24 +39,32 @@ export function fetchJsonp(url: string): Promise<{ data: object }> {
 }
 
 export const postJson = async (url: string, body: object) => {
-  const result = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-  return await result.json();
+  try {
+    const result = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+    return await result.json();
+  } catch (error) {
+    throw new Error('通信エラーが発生しました。');
+  }
 };
 
 export const postFile = async (url: string, file: File) => {
-  const formData = new FormData();
-  formData.append(file.name, file);
+  try {
+    const formData = new FormData();
+    formData.append(file.name, file);
 
-  const result = await fetch(url, {
-    method: 'POST',
-    body: formData,
-  });
-  return await result.json();
+    const result = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+    return await result.json();
+  } catch (error) {
+    throw new Error('通信エラーが発生しました。');
+  }
 };

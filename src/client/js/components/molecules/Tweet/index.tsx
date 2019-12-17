@@ -1,10 +1,9 @@
 import React from 'react';
 import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
-import * as actions from '../../../actions';
-import { Tweets } from '../../../types/global';
 import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import { Tweets } from '../../../types/api';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -19,7 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-type ComponentProps = Tweets;
+export type ComponentProps = Tweets;
 
 type ActionProps = {};
 

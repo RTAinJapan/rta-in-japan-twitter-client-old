@@ -77,7 +77,7 @@ const config: Configuration = {
           warnings: false,
           parse: {},
           compress: {},
-          mangle: true, // Note `mangle.properties` is `false` by default.
+          mangle: true,
           module: false,
           // output: null,
           toplevel: false,

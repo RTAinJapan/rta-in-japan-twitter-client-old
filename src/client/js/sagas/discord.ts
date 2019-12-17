@@ -93,6 +93,7 @@ export function* loginCheck() {
   try {
     const state: RootState = yield select();
     const config = state.reducer.config;
+    yield put(actions.updateStatus('initialzing'));
 
     let token = localStorage.getItem('discordToken');
     if (!token) {
@@ -116,6 +117,7 @@ export function* loginCheck() {
 
       yield put(actions.storeDiscordUserName(user.username));
       yield put(actions.changeNotify(true, 'info', `ユーザ名：${user.username}`));
+      yield put(actions.updateStatus('ok'));
     } else {
       yield call(logoutDiscord);
     }

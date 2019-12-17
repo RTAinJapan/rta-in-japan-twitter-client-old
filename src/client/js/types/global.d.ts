@@ -40,4 +40,9 @@ export type Config = {
     text: string[];
     footer: string;
   };
+  link: {
+    name: string;
+    url: string;
+    iconUrl: string;
+  }[];
 };

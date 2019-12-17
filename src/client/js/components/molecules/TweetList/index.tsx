@@ -1,11 +1,11 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Tweets } from '../../../types/global';
 import Tweet from '../Tweet';
 import ClearIcon from '@material-ui/icons/Clear';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
+import { Tweets } from '../../../types/api';
 
 const useStyles = makeStyles({
   root: {
@@ -26,10 +26,10 @@ const useStyles = makeStyles({
   },
 });
 
-type ComponentProps = {
+export type ComponentProps = {
   tweets: Tweets[];
 };
-type ActionProps = {
+export type ActionProps = {
   deleteTweet?: any;
 };
 

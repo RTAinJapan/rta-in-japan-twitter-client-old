@@ -22,5 +22,17 @@
       "『{game}』のカテゴリー「{category}」RTA\n走者の{runners}お疲れさまでした。\nクリアタイムはxx:xx:xxでした。"
     ],
     "footer": "配信はこちらから⇒https://www.twitch.tv/rtainjapan\n#RTAInJapan"
-  }
+  },
+  "link": [
+    {
+      "name": "RTA in Japan",
+      "url": "https://rtain.jp/",
+      "iconUrl": "./images/rtainjapan-icon.png"
+    },
+    {
+      "name": "RTA in Japan Discord",
+      "url": "https://discord.gg/dqpB8y6",
+      "iconUrl": "./images/discord-icon.png"
+    }
+  ]
 }

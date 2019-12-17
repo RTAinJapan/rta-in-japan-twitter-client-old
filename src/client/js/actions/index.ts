@@ -1,6 +1,7 @@
 import { createAction } from 'typesafe-actions';
-import { Tweets, PreviewFile, Config, Game } from '../types/global';
-import { DialogState } from '../reducers';
+import { PreviewFile, Config } from '../types/global';
+import { DialogState, RootState } from '../reducers';
+import { Tweets, Game } from '../types/api';
 
 const OPEN_NOTIFY = 'OPEN_NOTIFY';
 const CLOSE_NOTIFY = 'CLOSE_NOTIFY';
@@ -24,13 +25,19 @@ const LOGOUT_DISCORD = 'LOGOUT_DISCORD';
 const STORE_DISCORD_USER_NAME = 'STORE_DISCORD_USER_NAME';
 
 const STORE_CONFIG = 'STORE_CONFIG';
+
+const UPDATE_STATUS = 'UPDATE_STATUS';
+export const updateStatus = createAction(UPDATE_STATUS, action => {
+  return (status: RootState['reducer']['status']) => action(status);
+});
+
 export const storeConfig = createAction(STORE_CONFIG, action => {
   return (config: Config) => action(config);
 });
 
 /** 通知欄表示 */
 export const changeNotify = createAction(OPEN_NOTIFY, action => {
-  return (show: boolean, type: 'info' | 'warning' | 'error', message: string) => action({ show, type, message });
+  return (show: boolean, type: 'info' | 'warning' | 'error', message: string, closable?: boolean) => action({ show, type, message, closable: closable === false ? false : true });
 });
 /** 通知欄閉じる */
 export const closeNotify = createAction(CLOSE_NOTIFY);

@@ -1,7 +1,5 @@
-import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
-import { RootState } from '../reducers';
 import { fetchJson, postFile, postJson } from './common';
-import { Tweets, TwitterAPI } from '../types/global';
+import { TwitterAPI, Tweets } from '../types/api';
 
 /**
  * Twitterのルールに則り、文字数カウントを行う

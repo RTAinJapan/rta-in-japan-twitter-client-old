@@ -205,8 +205,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
         {/* プレビュー */}
         <div style={{ display: 'flex' }}>
           {props.mediaList.map((item, index, array) => (
-            <div key={`${array.length}_${index}`} style={{ width: '100%', margin: 5 }}>
-              <div onClick={handleShowPreview(index)}>
+            <div key={`${array.length}_${index}`} style={{ width: '100%', margin: 2 }}>
+              <div onClick={handleShowPreview(index)} style={{ width: '100%' }}>
                 {item.file.type.includes('video') ? (
                   <video className={classes.mediaThumb} muted src={item.file.preview}></video>
                 ) : (
@@ -217,6 +217,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
                 style={{ display: 'block' }}
                 variant={'contained'}
                 size={'small'}
+                disabled={props.disabled}
                 onClick={() => {
                   props.deleteMedia(index);
                 }}
@@ -234,7 +235,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           テンプレート
         </Button>
 
-        <Button className={classes.controlButton} variant={'contained'} color={'primary'} onClick={handleClickSubmit} disabled={tweetCount > 140 || tweetCount === 0}>
+        <Button
+          className={classes.controlButton}
+          variant={'contained'}
+          color={'primary'}
+          onClick={handleClickSubmit}
+          disabled={props.disabled || tweetCount > 140 || tweetCount === 0}
+        >
           送信
         </Button>
       </div>
@@ -302,6 +309,7 @@ const mapStateToProps = (state: RootState) => {
     mediaList: state.reducer.post.media,
     gameList: state.reducer.game,
     template: state.reducer.config.tweetTemplate,
+    disabled: ['posting', 'uploading'].includes(state.reducer.status),
   };
 };
 

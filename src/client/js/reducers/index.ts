@@ -19,11 +19,17 @@ export type DialogState = {
 };
 
 export type GlobalState = {
+  status: 'initialzing' | 'uploading' | 'posting' | 'ok' | 'error';
   /** 通知欄 */
   notify: {
+    /** 表示可否 */
     show: boolean;
+    /** 色 */
     type: 'info' | 'warning' | 'error';
+    /** メッセージ */
     message: string;
+    /** 手動で閉じられるか */
+    closable: boolean;
   };
   /** Discord */
   discord: {
@@ -60,11 +66,13 @@ export type RootState = {
 };
 
 const initial: GlobalState = {
+  status: 'ok',
   // 通知欄
   notify: {
     show: false,
     type: 'info',
     message: '',
+    closable: true,
   },
   dialog: {
     show: false,
@@ -108,24 +116,30 @@ const initial: GlobalState = {
       text: [],
       footer: '',
     },
+    link: [],
   },
 };
 
 const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
   switch (action.type) {
+    case getType(actions.updateStatus): {
+      return { ...state, status: action.payload };
+    }
     case getType(actions.storeConfig): {
       return { ...state, config: action.payload };
     }
-    // 通知
     case getType(actions.changeNotify): {
       return { ...state, notify: { ...action.payload } };
     }
     case getType(actions.closeNotify): {
       return { ...state, notify: { ...state.notify, show: false } };
     }
-    // ダイアログ
     case getType(actions.changeDialog): {
-      return { ...state, dialog: { ...state.dialog, ...action.payload } };
+      if (action.payload.show === false) {
+        return { ...state, dialog: initial.dialog };
+      } else {
+        return { ...state, dialog: { ...state.dialog, ...action.payload } };
+      }
     }
     case getType(actions.closeDialog): {
       return { ...state, dialog: { ...initial.dialog } };
@@ -158,7 +172,6 @@ const reducer = (state: GlobalState = initial, action: Action): GlobalState => {
         },
       };
     }
-    // Discordユーザ名
     case getType(actions.storeDiscordUserName): {
       return {
         ...state,

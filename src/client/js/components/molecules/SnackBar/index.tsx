@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import WarningIcon from '@material-ui/icons/Warning';
-import { WithStyles, withStyles, createStyles, Theme, StyleRules } from '@material-ui/core/styles';
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 
 const variantIcon = {
   success: CheckCircleIcon,
@@ -19,8 +19,14 @@ const variantIcon = {
   info: InfoIcon,
 };
 
-const styles1 = (theme: Theme): StyleRules =>
+const innerStyle = makeStyles((theme: Theme) =>
   createStyles({
+    snackbarMessage: {
+      width: 'calc(100% - 40px)',
+    },
+    snackbarAction: {
+      paddingLeft: 3,
+    },
     success: {
       backgroundColor: green[600],
     },
@@ -45,55 +51,21 @@ const styles1 = (theme: Theme): StyleRules =>
       alignItems: 'center',
     },
     close: {},
-  });
+  }),
+);
 
-interface SnackProps extends WithStyles<typeof styles1> {
-  message: string;
-  onClose: any;
-  variant: 'success' | 'warning' | 'error' | 'info';
-}
-
-const MySnackbarContent: React.FC<SnackProps> = (props: SnackProps) => {
-  const { classes, message, onClose, variant, ...other } = props;
-  const Icon = variantIcon[variant];
-
-  return (
-    <SnackbarContent
-      className={classNames(classes[variant])}
-      aria-describedby="client-snackbar"
-      message={
-        <span id="client-snackbar" className={classes.message}>
-          <Icon className={classNames(classes.icon, classes.iconVariant)} />
-          {message}
-        </span>
-      }
-      action={[
-        <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={onClose}>
-          <CloseIcon className={classes.icon} />
-        </IconButton>,
-      ]}
-      {...other}
-    />
-  );
-};
-
-const MySnackbarContentWrapper = withStyles(styles1)(MySnackbarContent);
-
-const styles2 = (theme: Theme): StyleRules =>
-  createStyles({
-    margin: {
-      margin: theme.spacing(1),
-    },
-  });
-
-type CustomeProps = {
+export type CustomeProps = {
   open: boolean;
   message: string;
   variant: 'success' | 'warning' | 'error' | 'info';
+  closable: boolean;
   onClose: (event: React.SyntheticEvent<any>, reason: string) => void;
-} & WithStyles<typeof styles2>;
+};
 
-const CustomizedSnackbars: React.FC<CustomeProps> = (props: CustomeProps) => {
+const CustomizedSnackbars: React.SFC<CustomeProps> = (props: CustomeProps) => {
+  const classes = innerStyle({});
+  const Icon = variantIcon[props.variant];
+
   return (
     <Snackbar
       anchorOrigin={{
@@ -101,12 +73,34 @@ const CustomizedSnackbars: React.FC<CustomeProps> = (props: CustomeProps) => {
         horizontal: 'left',
       }}
       open={props.open}
-      autoHideDuration={6000}
-      onClose={props.onClose}
+      autoHideDuration={props.closable ? 6000 : null}
+      onClose={props.closable ? props.onClose : undefined}
     >
-      <MySnackbarContentWrapper onClose={props.onClose} variant={props.variant} message={props.message} />
+      <SnackbarContent
+        className={classNames(classes[props.variant])}
+        aria-describedby="client-snackbar"
+        message={
+          <span className={classes.message}>
+            <Icon className={classNames(classes.icon, classes.iconVariant)} />
+            {props.message}
+          </span>
+        }
+        classes={{
+          message: classes.snackbarMessage,
+          action: classes.snackbarAction,
+        }}
+        action={
+          props.closable
+            ? [
+                <IconButton key="close" color="inherit" className={classes.close} onClick={props.onClose as any}>
+                  <CloseIcon className={classes.icon} />
+                </IconButton>,
+              ]
+            : []
+        }
+      />
     </Snackbar>
   );
 };
 
-export default withStyles(styles2)(CustomizedSnackbars);
+export default CustomizedSnackbars;
