@@ -37,25 +37,25 @@ export const countStr = (baseStr: string): number => {
 };
 
 const getStatusesUserTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/user_timeline/`;
+  const url = `${hostBase}statuses/user_timeline`;
   const result = await fetchJson(url);
   return result;
 };
 
 const getStatusesMentionsTimeLine = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/mentions_timeline/`;
+  const url = `${hostBase}statuses/mentions_timeline`;
   const result = await fetchJson(url);
   return result;
 };
 
 const getStatusesHash = async (hostBase: string): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/hash/`;
+  const url = `${hostBase}statuses/hash`;
   const result = await fetchJson(url);
   return result;
 };
 
 const postStatusesUpdate = async (hostBase: string, text: string, mediaIds: string[]): Promise<TwitterAPI<Tweets[]>> => {
-  const url = `${hostBase}statuses/update/`;
+  const url = `${hostBase}statuses/update`;
   const postObject = {
     status: text,
     media_ids: mediaIds,
@@ -65,7 +65,7 @@ const postStatusesUpdate = async (hostBase: string, text: string, mediaIds: stri
 };
 
 const postMediaUpload = async (hostBase: string, file: File): Promise<TwitterAPI<{ media_id_string: string }>> => {
-  const url = `${hostBase}media/upload/`;
+  const url = `${hostBase}media/upload`;
   const result = await postFile(url, file);
   return result;
 };

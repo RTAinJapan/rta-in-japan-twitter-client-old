@@ -136,6 +136,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   // ツイートテキストの強制更新
   React.useEffect(() => {
     setTweet(props.tweetText);
+    setTweetCount(countStr(props.tweetText));
   }, [props.tweetText]);
 
   /** ツイート送信 */
