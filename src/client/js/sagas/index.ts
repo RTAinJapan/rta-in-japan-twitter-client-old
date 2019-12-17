@@ -2,10 +2,11 @@ import { select, call, put, take, takeEvery, race } from 'redux-saga/effects';
 import * as actions from '../actions';
 import { confirmSaga } from './dialog';
 import { RootState } from '../reducers';
-import { PreviewFile, Config, GeneratorType, Game } from '../types/global';
+import { PreviewFile, Config, GeneratorType } from '../types/global';
 import { loginCheck, logoutDiscord, oauthDiscord } from './discord';
 import { fetchJson, fetchJsonp } from './common';
 import { twitterApi } from './twitterUtil';
+import { Game } from '../types/api';
 
 export default function* rootSaga() {
   yield call(fetchConfig);
@@ -22,17 +23,26 @@ export default function* rootSaga() {
   yield call(fetchGameListAndApplyState);
 }
 
+function* errorHandler(error: any) {
+  try {
+    const message = (error.message as string) || '予期せぬエラーが発生しました。';
+    yield put(actions.changeDialog({ show: true, type: 'error', message }));
+  } catch (e) {
+    console.error('★激辛だ★');
+  }
+}
+
 function* fetchConfig() {
   try {
     const config: Config = yield call(fetchJson, './config.json');
     yield put(actions.storeConfig(config));
-  } catch (e) {
-    yield put(actions.changeDialog({ show: true, type: 'error', message: 'エラーが発生しました。' }));
+  } catch (error) {
+    yield call(errorHandler, error);
   }
 }
 
 /**
- * ツイートデータ取得
+ * 各種ツイートデータ取得
  */
 function* fetchTweetListAndApplyState() {
   try {
@@ -54,13 +64,12 @@ function* fetchTweetListAndApplyState() {
 
     yield put(actions.closeNotify());
   } catch (error) {
-    yield put(actions.changeNotify(true, 'error', 'データ取得でエラーが発生しました'));
-    console.error(error);
+    yield call(errorHandler, error);
   }
 }
 
 /**
- * ツイートデータ取得
+ * ゲーム、走者データ取得
  */
 function* fetchGameListAndApplyState() {
   try {
@@ -77,13 +86,12 @@ function* fetchGameListAndApplyState() {
 
     yield put(actions.closeNotify());
   } catch (error) {
-    yield put(actions.changeNotify(true, 'error', 'データ取得でエラーが発生しました'));
-    console.error(error);
+    yield call(errorHandler, error);
   }
 }
 
 /**
- * ツイート送信ボタンの処理
+ * ツイート送信
  * @param action
  */
 function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
@@ -96,15 +104,20 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
 
     const mediaIds: string[] = state.reducer.post.media.map(media => media.media_id_string);
 
-    yield call(twitterApi.postStatusesUpdate, state.reducer.config.api.twitterBase, action.payload, mediaIds);
+    const postResult: GeneratorType<typeof twitterApi.postStatusesUpdate> = yield call(
+      twitterApi.postStatusesUpdate,
+      state.reducer.config.api.twitterBase,
+      action.payload,
+      mediaIds,
+    );
+    if (postResult.error) throw postResult.error;
 
     yield put(actions.storeMedia([]));
 
     yield put(actions.updateTweetText(''));
     yield put(actions.changeNotify(true, 'info', 'ツイートしました。'));
-  } catch (e) {
-    yield put(actions.changeDialog({ show: true, confirm: false, type: 'error', message: 'ツイートでエラーが発生しました。' }));
-    console.error(e);
+  } catch (error) {
+    yield call(errorHandler, error);
   }
 }
 
@@ -122,26 +135,30 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
 
     // 削除実行
     const result: GeneratorType<typeof twitterApi.postStatusesDestroy> = yield call(twitterApi.postStatusesDestroy, state.reducer.config.api.twitterBase, action.payload);
+    if (result.error) throw result.error;
 
     // 新しいリストを取得
     const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
     yield put(actions.updateTweetList(newTweetList.data, 'user'));
 
     yield put(actions.changeNotify(true, 'info', '削除完了'));
-  } catch (e) {
-    yield put(actions.changeDialog({ show: true, confirm: false, type: 'error', message: 'エラーが発生しました。' }));
-    console.error(e);
+  } catch (error) {
+    yield call(errorHandler, error);
   }
 }
 
+/**
+ * 添付メディアの取消
+ * @param action
+ */
 function* deleteMedia(action: ReturnType<typeof actions.deleteMedia>) {
   try {
     const state: RootState = yield select();
     const orgMedia = state.reducer.post.media;
     const newMedia = orgMedia.filter((media, index) => action.payload !== index);
     yield put(actions.storeMedia(newMedia));
-  } catch (e) {
-    //
+  } catch (error) {
+    yield call(errorHandler, error);
   }
 }
 
@@ -181,9 +198,10 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
 
     (nowMedia as PreviewFile).preview = URL.createObjectURL(nowMedia);
 
-    console.log(nowMedia);
+    console.debug(nowMedia);
     yield put(actions.changeNotify(true, 'info', 'ファイルアップロード中'));
     const uploadResult: GeneratorType<typeof twitterApi.postMediaUpload> = yield call(twitterApi.postMediaUpload, state.reducer.config.api.twitterBase, nowMedia);
+    if (uploadResult.error) throw uploadResult.error;
 
     yield put(
       actions.storeMedia([
@@ -195,7 +213,7 @@ function* uploadMedia(action: ReturnType<typeof actions.uploadMedia>) {
       ]),
     );
     yield put(actions.changeNotify(true, 'info', 'ファイルアップロード完了'));
-  } catch (e) {
-    yield put(actions.changeDialog({ show: true, type: 'error', message: e.message }));
+  } catch (error) {
+    yield call(errorHandler, error);
   }
 }

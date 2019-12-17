@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import { ActionType, getType } from 'typesafe-actions';
 import * as actions from '../actions';
-import { Tweets, PreviewFile, Config, Game } from '../types/global';
+import { PreviewFile, Config } from '../types/global';
+import { Tweets, Game } from '../types/api';
 type Action = ActionType<typeof actions>;
 
 export type DialogState = {
