@@ -14,9 +14,6 @@ import ListIcon from '@material-ui/icons/List';
 import BookmarkIcon from '@material-ui/icons/Bookmark';
 import OtherInfo from '../../organisms/OtherInfo';
 import Footer from '../../organisms/Footer';
-import TweetList from '../../molecules/TweetList';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Hidden from '@material-ui/core/Hidden';
 import TweetListPC from '../../organisms/TweetListPC';
@@ -32,6 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 1000,
       width: '100%',
       display: 'initial',
+      height: '100%',
     },
     login: {
       padding: 10,
@@ -76,29 +74,25 @@ const App: React.SFC<PropsType> = (props: PropsType) => {
     <div className={classes.root}>
       <div className={classes.content}>
         {props.discord.username ? (
-          <>
-            <div>
-              <NavTabs tabs={tabs} style={{ top: 0 }}>
-                {/* 投稿 */}
-                <div style={{ padding: 10 }}>
-                  <TweetForm />
-                </div>
-                {/* ツイート */}
-                <div>
-                  <Hidden smUp>
-                    <TweetListMobile />
-                  </Hidden>
-                  <Hidden xsDown>
-                    <TweetListPC />
-                  </Hidden>
-                </div>
-                {/* リンク */}
-                <div style={{ padding: 10 }}>
-                  <OtherInfo />
-                </div>
-              </NavTabs>
+          <NavTabs tabs={tabs} style={{ top: 0 }}>
+            {/* 投稿 */}
+            <div style={{ padding: 10 }}>
+              <TweetForm />
             </div>
-          </>
+            {/* ツイート */}
+            <>
+              <Hidden smUp>
+                <TweetListMobile />
+              </Hidden>
+              <Hidden xsDown>
+                <TweetListPC />
+              </Hidden>
+            </>
+            {/* リンク */}
+            <div style={{ padding: 10 }}>
+              <OtherInfo />
+            </div>
+          </NavTabs>
         ) : (
           <div className={classes.login}>
             <Modal open={true}>

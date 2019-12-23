@@ -30,9 +30,24 @@
       "iconUrl": "./images/rtainjapan-icon.png"
     },
     {
+      "name": "RTA in Japan Twitter",
+      "url": "https://twitter.com/rtainjapan",
+      "iconUrl": "./images/twitter-icon.png"
+    },
+    {
+      "name": "RTA in Japan Twitch",
+      "url": "https://www.twitch.tv/rtainjapan",
+      "iconUrl": "./images/twitch-icon.png"
+    },
+    {
       "name": "RTA in Japan Discord",
       "url": "https://discord.gg/dqpB8y6",
       "iconUrl": "./images/discord-icon.png"
+    },
+    {
+      "name": "RTA in Japan 2019(horaro)",
+      "url": "https://horaro.org/rtaij/rtaij2019",
+      "iconUrl": "./images/horaro-icon.png"
     }
   ]
 }

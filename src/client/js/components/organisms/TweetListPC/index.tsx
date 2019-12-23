@@ -5,13 +5,24 @@ import * as actions from '../../../actions';
 import { RootState } from '../../../reducers';
 import TweetList from '../../molecules/TweetList';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
+import Fab from '@material-ui/core/Fab';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      justifyContent: 'center',
       display: 'flex',
+    },
+    column: {
+      width: 'calc(100vw / 3 - 50px)',
+      marginLeft: 5,
+      marginRight: 5,
+    },
+    tweetColumn: {},
+    reloadButton: {
+      position: 'fixed',
+      bottom: theme.spacing(5),
+      right: theme.spacing(2),
     },
   }),
 );
@@ -24,33 +35,28 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
   const classes = useStyles({});
 
   return (
-    <div style={{ padding: 10, display: 'flex' }}>
-      <Grid container spacing={3}>
-        <Grid item sm={4}>
-          <div style={{ height: '100%' }}>
-            <Typography variant={'h6'}>運営ツイート</Typography>
-            <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-              <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} />
-            </div>
-          </div>
-        </Grid>
-        <Grid item sm={4}>
-          <div style={{ height: '100%' }}>
-            <Typography variant={'h6'}>返信</Typography>
-            <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-              <TweetList tweets={props.list.mention} />
-            </div>
-          </div>
-        </Grid>
-        <Grid item sm={4}>
-          <div style={{ height: '100%' }}>
-            <Typography variant={'h6'}>ハッシュタグ</Typography>
-            <div style={{ maxHeight: '50vh', overflowY: 'scroll' }}>
-              <TweetList tweets={props.list.hash} />
-            </div>
-          </div>
-        </Grid>
-      </Grid>
+    <div className={classes.root}>
+      <div className={classes.column}>
+        <Typography variant={'h6'}>運営ツイート</Typography>
+        <div className={classes.tweetColumn}>
+          <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} />
+        </div>
+      </div>
+      <div className={classes.column}>
+        <Typography variant={'h6'}>返信</Typography>
+        <div className={classes.tweetColumn}>
+          <TweetList tweets={props.list.mention} />
+        </div>
+      </div>
+      <div className={classes.column}>
+        <Typography variant={'h6'}>ハッシュタグ</Typography>
+        <div className={classes.tweetColumn}>
+          <TweetList tweets={props.list.hash} />
+        </div>
+      </div>
+      <Fab className={classes.reloadButton} color={'primary'} onClick={() => props.reloadTweet()}>
+        <RefreshIcon />
+      </Fab>
     </div>
   );
 };
@@ -65,6 +71,7 @@ const mapStateToProps = (state: RootState) => {
 // action
 const mapDispatchToProps = {
   deleteTweet: actions.deleteTweet,
+  reloadTweet: actions.reloadTweetList,
 };
 
 export default connect(

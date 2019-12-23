@@ -5,7 +5,6 @@ import Typography from '@material-ui/core/Typography';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: 'white',
       position: 'fixed',
       bottom: 0,
       width: '100%',

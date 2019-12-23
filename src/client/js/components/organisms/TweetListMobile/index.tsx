@@ -4,15 +4,19 @@ import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import * as actions from '../../../actions';
 import { RootState } from '../../../reducers';
 import TweetList from '../../molecules/TweetList';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import NavTabs from '../NavTabs';
+import Fab from '@material-ui/core/Fab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      justifyContent: 'center',
-      display: 'flex',
+      marginBottom: 40,
+    },
+    reloadButton: {
+      position: 'fixed',
+      bottom: theme.spacing(5),
+      right: theme.spacing(2),
     },
   }),
 );
@@ -37,7 +41,7 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
   ];
 
   return (
-    <div>
+    <div className={classes.root}>
       <NavTabs tabs={tabs} style={{ top: 73 }}>
         <div style={{ height: '100%', overflowY: 'scroll' }}>
           <TweetList tweets={props.list.user} deleteTweet={props.deleteTweet} />
@@ -49,6 +53,9 @@ const TweetListPC: React.SFC<PropsType> = (props: PropsType) => {
           <TweetList tweets={props.list.hash} />
         </div>
       </NavTabs>
+      <Fab className={classes.reloadButton} color={'primary'} onClick={() => props.reloadTweet()}>
+        <RefreshIcon />
+      </Fab>
     </div>
   );
 };
@@ -63,6 +70,7 @@ const mapStateToProps = (state: RootState) => {
 // action
 const mapDispatchToProps = {
   deleteTweet: actions.deleteTweet,
+  reloadTweet: actions.reloadTweetList,
 };
 
 export default connect(

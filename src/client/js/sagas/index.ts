@@ -11,14 +11,15 @@ import { Game } from '../types/api';
 export default function* rootSaga() {
   yield call(fetchConfig);
   yield takeEvery(actions.loginDiscord, oauthDiscord);
+  yield takeEvery(actions.reloadTweetList, fetchTweetListAndApplyState);
   yield takeEvery(actions.submitTweet, submitTweet);
   yield takeEvery(actions.deleteTweet, deleteTweet);
   yield takeEvery(actions.uploadMedia, uploadMedia);
   yield takeEvery(actions.deleteMedia, deleteMedia);
 
   yield takeEvery(actions.logoutDiscord, logoutDiscord);
-  // yield call(loginCheck);
-  yield put(actions.storeDiscordUserName('テストユーザ'));
+  yield call(loginCheck);
+  // yield put(actions.storeDiscordUserName('テストユーザ'));
   yield call(fetchTweetListAndApplyState);
   yield call(fetchGameListAndApplyState);
 }
@@ -51,7 +52,7 @@ function* fetchTweetListAndApplyState() {
     const state: RootState = yield select();
     if (!state.reducer.discord.username) return;
 
-    yield put(actions.changeNotify(true, 'info', 'データ取得中'));
+    yield put(actions.changeNotify(true, 'info', 'ツイート取得中'));
 
     let tweet: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
     if (tweet.error) throw tweet.error;
@@ -63,7 +64,7 @@ function* fetchTweetListAndApplyState() {
     if (tweet.error) throw tweet.error;
     yield put(actions.updateTweetList(tweet.data, 'hash'));
 
-    yield put(actions.closeNotify());
+    yield put(actions.changeNotify(true, 'info', 'ツイート取得完了'));
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -78,14 +79,14 @@ function* fetchGameListAndApplyState() {
     const state: RootState = yield select();
     if (!state.reducer.discord.username) return;
 
-    yield put(actions.changeNotify(true, 'info', 'データ取得中'));
+    yield put(actions.changeNotify(true, 'info', '走者データ取得中'));
 
     const result: {
       data: { status: string; data: Game[] };
     } = yield call(fetchJsonp, state.reducer.config.api.runner);
     yield put(actions.updateGameList(result.data.data));
 
-    yield put(actions.closeNotify());
+    yield put(actions.changeNotify(true, 'info', '走者データ取得完了'));
   } catch (error) {
     yield call(errorHandler, error);
   }
@@ -136,6 +137,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
 
     const isContinue = yield call(confirmSaga, 'ツイートを削除します。よろしいですか？', 'info', `${deleteTargetTweet[0].text}`);
     if (!isContinue) return;
+    yield put(actions.changeNotify(true, 'info', '削除要求中'));
 
     yield put(actions.updateStatus('posting'));
     // 削除実行
@@ -144,6 +146,7 @@ function* deleteTweet(action: ReturnType<typeof actions.deleteTweet>) {
 
     // 新しいリストを取得
     const newTweetList: GeneratorType<typeof twitterApi.getStatusesUserTimeLine> = yield call(twitterApi.getStatusesUserTimeLine, state.reducer.config.api.twitterBase);
+    if (newTweetList.error) throw newTweetList.error;
     yield put(actions.updateTweetList(newTweetList.data, 'user'));
 
     yield put(actions.changeNotify(true, 'info', '削除完了'));

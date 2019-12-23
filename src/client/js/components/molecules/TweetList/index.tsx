@@ -11,6 +11,7 @@ const useStyles = makeStyles({
   root: {
     height: '100%',
     minHeight: 300,
+    padding: 5,
   },
   button: {
     minWidth: '40px',

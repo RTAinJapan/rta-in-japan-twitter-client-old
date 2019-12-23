@@ -107,6 +107,7 @@ export function* loginCheck() {
       const user: DiscordUser = yield call(getCurrentUser);
       const userGuildList: DiscordGuild[] = yield call(getUserGuild);
       if (!userGuildList) {
+        yield put(actions.changeNotify(true, 'info', '再ログインしてください。'));
         yield call(logoutDiscord);
         return;
       }

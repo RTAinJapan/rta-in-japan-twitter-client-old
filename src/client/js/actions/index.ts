@@ -8,6 +8,7 @@ const CLOSE_NOTIFY = 'CLOSE_NOTIFY';
 const OPEN_DIALOG = 'OPEN_DIALOG';
 const CLOSE_DIALOG = 'CLOSE_DIALOG';
 
+const RELOAD_TWEET_LIST = 'RELOAD_TWEET_LIST';
 const UPDATE_TWEET_LIST = 'UPDATE_TWEET_LIST';
 const UPDATE_TWEET_TEXT = 'UPDATE_TWEET_TEXT';
 const SUBMIT_TWEET = 'SUBMIT_TWEET';
@@ -56,11 +57,15 @@ export const dialogNo = createAction(DIALOG_NO, action => {
   return (args: any) => action(args);
 });
 
+/** ツイートリロードボタン */
+export const reloadTweetList = createAction(RELOAD_TWEET_LIST);
+
 /** ツイート取得結果更新 */
 export const updateTweetList = createAction(UPDATE_TWEET_LIST, action => {
   return (list: Tweets[], type: 'user' | 'hash' | 'mention') => action({ list, type });
 });
 
+/** 投稿テキストの格納 */
 export const updateTweetText = createAction(UPDATE_TWEET_TEXT, action => {
   return (text: string) => action(text);
 });
