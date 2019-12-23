@@ -116,9 +116,12 @@ function* submitTweet(action: ReturnType<typeof actions.submitTweet>) {
     );
     if (postResult.error) throw postResult.error;
 
-    yield put(actions.storeMedia([]));
+    yield put(actions.updateTweetList(postResult.data, 'user'));
 
+    // 各種初期化
+    yield put(actions.storeMedia([]));
     yield put(actions.updateTweetText(''));
+    // 完了通知
     yield put(actions.changeNotify(true, 'info', 'ツイートしました。'));
     yield put(actions.updateStatus('ok'));
   } catch (error) {
