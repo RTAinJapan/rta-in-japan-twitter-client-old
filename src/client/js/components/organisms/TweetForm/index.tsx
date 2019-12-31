@@ -72,8 +72,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   const [showTemplate, setShowTemplate] = React.useState<boolean>(false);
   const toggleTemplate = () => setShowTemplate(!showTemplate);
 
-  // テンプレートのゲーム
-  const [templateGame, setTemplateGame] = React.useState<string>('');
+  // テンプレートのゲームで選択しているもの
+  const [templateGameIndex, setTemplateGameIndex] = React.useState<number>(NaN);
 
   // テンプレートのテキスト
   const [templateList, setTemplate] = React.useState<string[]>([]);
@@ -94,10 +94,13 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   // テンプレート文の生成
   React.useEffect(() => {
     const newTemplateList = [];
-    const selectedGame = props.gameList.filter(game => game.gamename === templateGame);
-    const gamename = selectedGame.length > 0 ? selectedGame[0].gamename : '';
-    const category = selectedGame.length > 0 ? selectedGame[0].category : '';
-    const runners = selectedGame.length > 0 ? selectedGame[0].runner : [];
+    const selectedGame = props.gameList[templateGameIndex];
+    /** ゲーム名 */
+    const gamename = selectedGame ? selectedGame.gamename : '';
+    /** カテゴリ */
+    const category = selectedGame ? selectedGame.category : '';
+    /** 走者 */
+    const runners = selectedGame ? selectedGame.runner : [];
     const runnerText = runners
       .map(runner => {
         let text = `${runner.username}さん`;
@@ -108,8 +111,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
         if (index === 0) return prev + next;
         return prev + '、' + next;
       }, '');
-
-    const commentaries = selectedGame.length > 0 ? selectedGame[0].commentary : [];
+    /** 解説 */
+    const commentaries = selectedGame ? selectedGame.commentary : [];
     const commentariesText = commentaries
       .map(commentary => {
         let text = `${commentary.username}さん`;
@@ -131,7 +134,7 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
       newTemplateList.push(newTemplate);
     }
     setTemplate(newTemplateList);
-  }, [templateGame]);
+  }, [templateGameIndex]);
 
   // ツイートテキストの強制更新
   React.useEffect(() => {
@@ -145,8 +148,8 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
   };
 
   /** テンプレートのゲーム選択 */
-  const handleChangeGame = (event: React.ChangeEvent<{ name?: string; value: string }>, child: React.ReactNode): void => {
-    setTemplateGame(event.target.value);
+  const handleChangeGame = (event: React.ChangeEvent<{ name?: string; value: number }>, child: React.ReactNode): void => {
+    setTemplateGameIndex(event.target.value);
   };
 
   /** テンプレート文の適用 */
@@ -253,9 +256,9 @@ const TweetForm: React.SFC<PropsType> = (props: PropsType) => {
           <div style={{ padding: 5 }}>
             <FormControl style={{ width: '100%' }}>
               <InputLabel>ゲーム選択</InputLabel>
-              <Select value={templateGame} onChange={handleChangeGame}>
+              <Select value={templateGameIndex} onChange={handleChangeGame}>
                 {props.gameList.map((game, index) => (
-                  <MenuItem key={index.toString()} value={game.gamename}>
+                  <MenuItem key={index.toString()} value={index}>
                     {game.gamename}
                   </MenuItem>
                 ))}
