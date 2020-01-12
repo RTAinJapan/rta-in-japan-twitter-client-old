@@ -33,7 +33,7 @@ const config: Configuration = {
 
   entry: path.resolve('./js/index.tsx'),
   output: {
-    path: path.resolve(`../../public/`),
+    path: path.resolve(`./build/`),
     filename: 'main.js',
   },
   module: {

@@ -1,18 +1,18 @@
 {
   "api": {
     "twitterBase": "http://localhost:8000/api/twitter/",
-    "runner": "https://script.google.com/macros/s/AKfycbzSdach0QMlcl75Yi4ZX51rlyOf__ov96lsNLqhfwpK42D-P9c/exec"
+    "runner": ""
   },
   "discord": {
     "config": {
-      "clientId": "627778242727641088",
+      "clientId": "",
       "clientSecret": "",
       "redirectUrl": "http://localhost:8080/login/discord",
       "scope": "identify%20guilds"
     },
-    "guild": "247368306896404480",
-    "roles": ["247369833300230144", "640861896995766272"],
-    "users": ["163962550780821506", "131399322360217600", "204527119445786626"]
+    "guild": "",
+    "roles": [],
+    "users": []
   },
   "tweetTemplate": {
     "text": [

@@ -1,6 +1,1 @@
-/cache
-/phpunit.xml
-/vendor/*
-/.env
-.htaccess
 node_modules
